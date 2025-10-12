@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/main/HomePage';
+import DonorPage from './pages/donor/DonorPage';
 
 const router = createBrowserRouter([
   {
@@ -15,34 +16,29 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
-      },
-      // {
-      //   path: "/about",
-      //   element: <AboutPage />
-      // },
+      }
     ]
   },
-  // {
-  //   path: "/donor",
-  //   element: <App />,
-  //   ErrorElement: <Error />, // create custom error component and change it
-  //   Children: []
-  // },
-  // {
-  //   path: "/recipient",
-  //   element: <App />,
-  //   ErrorElement: <Error />, // create custom error component and change it
-  //   Children: [
-  //     {
-  //       index: true,
-  //       element: <Home />
-  //     },
-  //     {
-  //       path: "/login",
-  //       element: <AboutPage />
-  //     },
-  //   ]
-  // }
+  {
+    path: "/donor",
+    element: <DonorPage />,
+    // ErrorElement: <Error />, // create custom error component and change it
+    Children: [{
+      index: true,
+      element: <Home />
+    },]
+  },
+  {
+    path: "/recipient",
+    element: <App />,
+    // ErrorElement: <Error />, // create custom error component and change it
+    Children: [
+      {
+        index: true,
+        element: <Home />
+      },
+    ]
+  }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

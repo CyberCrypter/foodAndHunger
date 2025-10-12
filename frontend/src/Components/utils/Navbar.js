@@ -1,8 +1,14 @@
 import React from 'react'
-
 const Navbar = () => {
     return (
-        <div>Navbar</div>
+        <div>
+            <ul>
+                <li>Home</li>
+                <li>contact</li>
+                <li>about</li>
+                <li>servies</li>
+            </ul>
+        </div>
     )
 }
 
