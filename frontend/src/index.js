@@ -6,22 +6,26 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/main/HomePage';
 import DonorPage from './pages/donor/DonorPage';
-
+import DDashboard from './pages/donor/DDashboard';
+import CustomError from './pages/Error/CustomError';
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    // ErrorElement: <Error />, // create custom error component and change it
+    ErrorElement: <CustomError />, // create custom error component and change it
     children: [
       {
         index: true,
-        element: <Home />
+        element: <Home /> // check if user logged in if yes, pass the param
+      },
+      {
+        path:"about"
       }
     ]
   },
   {
     path: "/donor",
-    element: <DonorPage />,
+    element: <DDashboard />,
     // ErrorElement: <Error />, // create custom error component and change it
     Children: [{
       index: true,
