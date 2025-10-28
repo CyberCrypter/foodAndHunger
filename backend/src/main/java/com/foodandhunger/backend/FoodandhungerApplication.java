@@ -181,7 +181,9 @@ class SecurityConfig {
                                 "/api/auth/donor/"
                         ).permitAll()
                         .anyRequest().authenticated()
-                );
+                )
+                .formLogin(form -> form.disable())   // disable default login form
+                .httpBasic(basic -> basic.disable()); // disable HTTP Basic auth
 
         return http.build();
     }
