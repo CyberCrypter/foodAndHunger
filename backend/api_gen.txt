@@ -38,15 +38,7 @@ donor {
 	signature
 }
 
-user_donor {
-	username
-	email id
-	password
-}
-
-
-user_recipient{
-	name	
+user {
 	username
 	email id
 	password
