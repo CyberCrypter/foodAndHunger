@@ -1,5 +1,6 @@
 package com.foodandhunger.backend.repository;
 
+import com.foodandhunger.backend.models.DonorModel;
 import com.foodandhunger.backend.models.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,3 +16,4 @@ public interface UserRepo extends JpaRepository<UserModel, Integer> {
     Optional<UserModel> findByUsername(String username);
     Optional<UserModel> findByEmail(String email);
 }
+

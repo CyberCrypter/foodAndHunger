@@ -25,6 +25,7 @@ public class UserService {
         return "successfully registered user";
     }
 
+    // login
     public boolean validateUser(String username, String password) {
         Optional<UserModel> opt = userDonorRepository.findByUsername(username);
         return opt.isPresent() && opt.get().getPassword().equals(password);

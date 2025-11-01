@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "feedbacks")
-public class FeedbackModule {
+public class FeedbackModel {
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
@@ -22,8 +22,8 @@ public class FeedbackModule {
     @Getter
     private int star;
 
-    FeedbackModule(){}
-    FeedbackModule(int userId, String message, int star){
+    FeedbackModel(){}
+    FeedbackModel(int userId, String message, int star){
         this.userId = userId;
         this.message = message;
         this.star = star;
