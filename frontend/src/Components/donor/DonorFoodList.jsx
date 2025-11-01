@@ -121,7 +121,7 @@ const DonorFoodList = () => {
                         >
                             {/* Listing Header (Always Visible) */}
                             <div
-                                className={`p-6 flex items-center justify-between cursor-pointer transition-colors duration-200 ${expandedListing === listing.id ? 'bg-green-500/10' : 'hover:bg-gray-50'
+                                className={`p-6 flex items-center justify-between cursor-pointer transition-colors duration-200 ${expandedListing === listing.id ? 'bg-green-500/10' : 'hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white'
                                     }`}
                                 onClick={() => toggleExpansion(listing.id)}
                             >
