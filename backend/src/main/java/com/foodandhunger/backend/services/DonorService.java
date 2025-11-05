@@ -2,6 +2,7 @@ package com.foodandhunger.backend.services;
 
 import com.foodandhunger.backend.models.DonorModel;
 import com.foodandhunger.backend.repository.DonorRepo;
+import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,46 +11,122 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DonorService {
-    @Autowired
-    DonorRepo donorRepository;
+public class DonorService implements ServicesStruct<DonorModel> {
 
-    // get donor
-    public Optional<DonorModel> getDonorById(int id){
-        LLogging.info("getDonorById");
-        try{
+    @Autowired
+    private DonorRepo donorRepository;
+
+    // ✅ Get donor by ID
+    @Override
+    public Optional<DonorModel> getById(int id) {
+        LLogging.info("getDonorById()");
+        try {
             Optional<DonorModel> donor = donorRepository.findById(id);
-            if (donor.isPresent()){
-                LLogging.info("Donor found: " + donor.get().getName());
-            }else{
-                LLogging.warn("Donor not found id: " + id);
-            }
+            donor.ifPresentOrElse(
+                    d -> LLogging.info("Donor found: " + d.getName()),
+                    () -> LLogging.warn("Donor not found, id: " + id)
+            );
             return donor;
-        }catch (Exception e){
-            LLogging.error(String.valueOf(e));
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
             return Optional.empty();
         }
     }
 
-    // get all donor
-    public List<DonorModel> getAllDonors(int id){
-        LLogging.info("get all donors");
-        try{
+    // ✅ Get all donors
+    @Override
+    public List<DonorModel> getAll() {
+        LLogging.info("getAllDonors()");
+        try {
             List<DonorModel> donors = donorRepository.findAll();
-            if (!donors.isEmpty()){
-                LLogging.info("Fetched donors");
-            }else{
-                LLogging.warn("No donor available");
+            if (donors.isEmpty()) {
+                LLogging.warn("No donors found");
+            } else {
+                LLogging.info("Fetched " + donors.size() + " donors");
             }
             return donors;
-        }catch (Exception e){
-            LLogging.error(String.valueOf(e));
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return List.of();
         }
-        return null;
     }
-    // update donor
-    // add donor
-    // remove donor
 
+    // ✅ Create donor
+    @Override
+    public boolean create(DonorModel donor) {
+        LLogging.info("createDonor()");
+        try {
+            donorRepository.save(donor);
+            LLogging.info("Donor saved: " + donor.getName());
+            return true;
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return false;
+        }
+    }
 
+    // ✅ Update donor by ID
+    @Override
+    public boolean updateById(int id, DonorModel donor) {
+        LLogging.info("updateDonorById()");
+        try {
+            DonorModel existing = donorRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Donor not found"));
+            existing.setAadhaar(donor.getAadhaar());
+            existing.setName(donor.getName());
+            existing.setAge(donor.getAge());
+            existing.setAddress(donor.getAddress());
+            existing.setOrganization_certificate_id(donor.getOrganization_certificate_id());
+            existing.setOrganizationName(donor.getOrganizationName());
+            existing.setPan(donor.getPan());
+            existing.setPhone(donor.getPhone());
+            existing.setEmail(donor.getEmail());
+            existing.setUserId(donor.getUserId());
+            donorRepository.save(existing); // ✅ Save after update
+            LLogging.info("Donor updated with id: " + id);
+            return true;
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return false;
+        }
+    }
+
+    // ✅ Update donor by user ID
+    public boolean updateByUserId(int userId, DonorModel donor) {
+        LLogging.info("updateDonorByUserId()");
+        try {
+            DonorModel existing = donorRepository.findByUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Donor not found"));
+            existing.setAadhaar(donor.getAadhaar());
+            existing.setName(donor.getName());
+            existing.setAge(donor.getAge());
+            existing.setAddress(donor.getAddress());
+            existing.setOrganization_certificate_id(donor.getOrganization_certificate_id());
+            existing.setOrganizationName(donor.getOrganizationName());
+            existing.setPan(donor.getPan());
+            existing.setPhone(donor.getPhone());
+            existing.setEmail(donor.getEmail());
+            existing.setUserId(donor.getUserId());
+            donorRepository.save(existing); // ✅ Save after update
+            LLogging.info("Donor updated with userId: " + userId);
+            return true;
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return false;
+        }
+    }
+
+    // ✅ Delete donor by ID
+    @Override
+    public boolean delete(int id) {
+        LLogging.info("deleteDonor()");
+        try {
+            donorRepository.deleteById(id);
+            LLogging.info("Donor deleted with id: " + id);
+            return true;
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return false;
+        }
+    }
 }

@@ -12,8 +12,6 @@ import java.util.Optional;
 // UserDetailsService for Authentication
 @Service
 public class UserService {
-
-
     @Autowired
     private UserRepo userRepository;
 
@@ -51,7 +49,7 @@ public class UserService {
     public boolean removeUser(int id){
         try{
             LLogging.info("user removed successfully with id: " + id);
-            userRepository.deleteAllById(Collections.singleton(id));
+            userRepository.deleteById(id);
             return true ;
         }catch (Exception e){
             LLogging.error(String.valueOf(e));
