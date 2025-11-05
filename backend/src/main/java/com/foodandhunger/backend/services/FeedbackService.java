@@ -28,10 +28,7 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
         return false;
     }
 
-    @Override
-    public boolean updateByUserId(int userId, FeedbackModel entity) {
-        return false;
-    }
+
 
     @Override
     public boolean create(FeedbackModel entity) {

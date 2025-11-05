@@ -28,10 +28,6 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
         return false;
     }
 
-    @Override
-    public boolean updateByUserId(int userId, RecipientModel entity) {
-        return false;
-    }
 
     @Override
     public boolean create(RecipientModel entity) {

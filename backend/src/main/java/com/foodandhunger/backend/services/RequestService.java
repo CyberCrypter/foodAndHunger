@@ -29,10 +29,6 @@ public class RequestService implements ServicesStruct<RequestModel> {
         return false;
     }
 
-    @Override
-    public boolean updateByUserId(int userId, RequestModel entity) {
-        return false;
-    }
 
     @Override
     public boolean create(RequestModel entity) {
