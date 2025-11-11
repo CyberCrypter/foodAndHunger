@@ -10,4 +10,5 @@ public interface RecipientRepo extends JpaRepository<RecipientModel, Integer> {
     boolean existsByUserId(int userId);
     Optional<RecipientModel> findByUserId(int userId);
     List<RecipientModel> findByLocation(String location);
+    List<RecipientModel> findByNameContainingIgnoreCase(String name);
 }

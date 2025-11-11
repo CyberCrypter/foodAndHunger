@@ -5,26 +5,40 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // ✅ disable CSRF for Postman
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/user/signup",
-                                "/api/auth/user/login",
-                                "/api/auth/user/"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                                "/api/auth/**",       // ✅ signup/login routes
+                                "/api/donation/**",   // ✅ donation routes
+                                "/api/donor/**",
+                                "/api/request/**",
+                                "/api/recipient/**",
+                                "/api/feedback/**"
+                        ).permitAll()            // ✅ allow all these
+                        .anyRequest().permitAll() // ✅ also allow everything else (for now)
                 )
-                .formLogin(form -> form.disable())   // disable default login form
-                .httpBasic(basic -> basic.disable()); // disable HTTP Basic auth
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
 
         return http.build();
+    }
+
+    // ✅ CORS config
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
 }

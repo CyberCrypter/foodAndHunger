@@ -10,7 +10,7 @@ public interface ControllerStruct<T>{
     ResponseEntity<String> create(T entity);
     ResponseEntity<T> get(  int id);
     ResponseEntity<List<T>> getAll();
-    ResponseEntity<T> update( T entity);
+    ResponseEntity<T> update(int id, T entity);
     ResponseEntity<String> delete( int id);
 
 

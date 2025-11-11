@@ -1,7 +1,6 @@
 package com.foodandhunger.backend.services;
 
 import com.foodandhunger.backend.models.FeedbackModel;
-import com.foodandhunger.backend.models.RequestModel;
 import com.foodandhunger.backend.repository.FeedbackRepo;
 import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.LLogging;
@@ -14,18 +13,21 @@ import java.util.Optional;
 
 @Service
 public class FeedbackService implements ServicesStruct<FeedbackModel> {
+
     @Autowired
-    FeedbackRepo feedbackRepo ;
+    FeedbackRepo feedbackRepo;
+
     @Override
     public Optional<FeedbackModel> getById(int id) {
         LLogging.info("getById()");
         try {
             Optional<FeedbackModel> existing = feedbackRepo.findById(id);
             existing.ifPresentOrElse(
-                    d -> LLogging.info("Donation found " + d.getMessage()),
-                    () -> LLogging.warn("Donation not found, id: " + id));
+                    f -> LLogging.info("Feedback found: " + f.getMessage()),
+                    () -> LLogging.warn("Feedback not found, id: " + id)
+            );
             return existing;
-        }catch (Exception e){
+        } catch (Exception e) {
             LLogging.error(e.getMessage());
             return Optional.empty();
         }
@@ -34,15 +36,16 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
     @Override
     public List<FeedbackModel> getAll() {
         LLogging.info("getAll()");
-        try{
-            List<FeedbackModel> allRequests = feedbackRepo.findAll();
-            if (allRequests.isEmpty()){
-                LLogging.warn("No Donors found");
-            }else {
-                LLogging.info("Fetched " + allRequests.size() + " donations");
+        try {
+            List<FeedbackModel> feedbacks = feedbackRepo.findAll();
+            if (feedbacks.isEmpty()) {
+                LLogging.warn("No feedbacks found");
+            } else {
+                LLogging.info("Fetched " + feedbacks.size() + " feedbacks");
             }
-            return allRequests;
-        }catch (Exception e){
+            return feedbacks;
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
             return List.of();
         }
     }
@@ -50,28 +53,30 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
     @Override
     public boolean updateById(int id, FeedbackModel entity) {
         LLogging.info("updateById()");
-        try{
+        try {
             FeedbackModel existing = feedbackRepo.findById(id)
-                    .orElseThrow(()->new RuntimeException("Donation not found"));
+                    .orElseThrow(() -> new RuntimeException("Feedback not found"));
             existing.setUserId(entity.getUserId());
             existing.setMessage(entity.getMessage());
             existing.setStar(entity.getStar());
+            feedbackRepo.save(existing);
+            LLogging.info("Feedback updated successfully for id: " + id);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             LLogging.error(e.getMessage());
             return false;
         }
     }
-
 
     @Override
     public boolean create(FeedbackModel entity) {
         LLogging.info("create()");
         try {
             feedbackRepo.save(entity);
-            LLogging.info("Donation saved " + entity.getMessage());
+            LLogging.info("Feedback saved: " + entity.getMessage());
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
             return false;
         }
     }
@@ -80,25 +85,57 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
     public boolean delete(int id) {
         LLogging.info("delete()");
         try {
+            if (!feedbackRepo.existsById(id)) {
+                LLogging.warn("Feedback not found, cannot delete");
+                return false;
+            }
             feedbackRepo.deleteById(id);
+            LLogging.info("Feedback deleted, id: " + id);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
             return false;
         }
     }
 
     @Override
     public ResponseEntity<List<FeedbackModel>> search(String query) {
-        return null;
+        LLogging.info("search()");
+        try {
+            List<FeedbackModel> results = feedbackRepo.findByMessageContainingIgnoreCase(query);
+            if (results.isEmpty()) {
+                LLogging.warn("No feedback found for query: " + query);
+            } else {
+                LLogging.info("Found " + results.size() + " feedback entries");
+            }
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Long> count() {
-        return null;
+        LLogging.info("count()");
+        try {
+            long total = feedbackRepo.count();
+            return ResponseEntity.ok(total);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Boolean> exists(int id) {
-        return null;
+        LLogging.info("exists()");
+        try {
+            boolean exists = feedbackRepo.existsById(id);
+            return ResponseEntity.ok(exists);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 }

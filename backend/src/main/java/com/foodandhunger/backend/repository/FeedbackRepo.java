@@ -8,5 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FeedbackRepo extends JpaRepository<FeedbackModel, Integer> {
+    List<FeedbackModel> findByMessageContainingIgnoreCase(String message);
 
 }

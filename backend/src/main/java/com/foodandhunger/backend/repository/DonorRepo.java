@@ -13,5 +13,6 @@ public interface DonorRepo extends JpaRepository<DonorModel, Integer> {
     boolean  existsByUserId(int userId);
     Optional<DonorModel> findByUserId(int userId);
     List<DonorModel> findByLocation(String location);
+    List<DonorModel> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
 
 }

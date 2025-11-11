@@ -1,6 +1,5 @@
 package com.foodandhunger.backend.services;
 
-import com.foodandhunger.backend.models.DonorModel;
 import com.foodandhunger.backend.models.RecipientModel;
 import com.foodandhunger.backend.repository.RecipientRepo;
 import com.foodandhunger.backend.structures.ServicesStruct;
@@ -14,16 +13,18 @@ import java.util.Optional;
 
 @Service
 public class RecipientService implements ServicesStruct<RecipientModel> {
+
     @Autowired
-    RecipientRepo recipientRepo ;
+    RecipientRepo recipientRepo;
+
     @Override
     public Optional<RecipientModel> getById(int id) {
-        LLogging.info("getDonorById()");
+        LLogging.info("getById()");
         try {
             Optional<RecipientModel> recipient = recipientRepo.findById(id);
             recipient.ifPresentOrElse(
-                    d -> LLogging.info("Donor found: " + d.getName()),
-                    () -> LLogging.warn("Donor not found, id: " + id)
+                    r -> LLogging.info("Recipient found: " + r.getName()),
+                    () -> LLogging.warn("Recipient not found, id: " + id)
             );
             return recipient;
         } catch (Exception e) {
@@ -34,15 +35,15 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
 
     @Override
     public List<RecipientModel> getAll() {
-        LLogging.info("getAllDonors()");
+        LLogging.info("getAll()");
         try {
-            List<RecipientModel> recipient = recipientRepo.findAll();
-            if (recipient.isEmpty()) {
-                LLogging.warn("No donors found");
+            List<RecipientModel> recipients = recipientRepo.findAll();
+            if (recipients.isEmpty()) {
+                LLogging.warn("No recipients found");
             } else {
-                LLogging.info("Fetched " + recipient.size() + " donors");
+                LLogging.info("Fetched " + recipients.size() + " recipients");
             }
-            return recipient;
+            return recipients;
         } catch (Exception e) {
             LLogging.error(e.getMessage());
             return List.of();
@@ -51,10 +52,10 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
 
     @Override
     public boolean updateById(int id, RecipientModel entity) {
-        LLogging.info("updateDonorById()");
+        LLogging.info("updateById()");
         try {
             RecipientModel existing = recipientRepo.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Donor not found"));
+                    .orElseThrow(() -> new RuntimeException("Recipient not found"));
             existing.setAadhaar(entity.getAadhaar());
             existing.setName(entity.getName());
             existing.setAge(entity.getAge());
@@ -67,8 +68,8 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
             existing.setEmail(entity.getEmail());
             existing.setUserId(entity.getUserId());
             existing.setPhoto(entity.getPhoto());
-            recipientRepo.save(existing); // ✅ Save after update
-            LLogging.info("Donor updated with id: " + id);
+            recipientRepo.save(existing);
+            LLogging.info("Recipient updated with id: " + id);
             return true;
         } catch (Exception e) {
             LLogging.error(e.getMessage());
@@ -76,13 +77,12 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
         }
     }
 
-
     @Override
     public boolean create(RecipientModel entity) {
         LLogging.info("create()");
         try {
             recipientRepo.save(entity);
-            LLogging.info("Donor saved: " + entity.getName());
+            LLogging.info("Recipient saved: " + entity.getName());
             return true;
         } catch (Exception e) {
             LLogging.error(e.getMessage());
@@ -92,10 +92,14 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
 
     @Override
     public boolean delete(int id) {
-        LLogging.info("deleteDonor()");
+        LLogging.info("delete()");
         try {
+            if (!recipientRepo.existsById(id)) {
+                LLogging.warn("Recipient not found, cannot delete");
+                return false;
+            }
             recipientRepo.deleteById(id);
-            LLogging.info("Donor deleted with id: " + id);
+            LLogging.info("Recipient deleted with id: " + id);
             return true;
         } catch (Exception e) {
             LLogging.error(e.getMessage());
@@ -105,16 +109,42 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
 
     @Override
     public ResponseEntity<List<RecipientModel>> search(String query) {
-        return null;
+        LLogging.info("search()");
+        try {
+            List<RecipientModel> result = recipientRepo.findByNameContainingIgnoreCase(query);
+            if (result.isEmpty()) {
+                LLogging.warn("No results found for query: " + query);
+            } else {
+                LLogging.info("Found " + result.size() + " recipients for query: " + query);
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Long> count() {
-        return null;
+        LLogging.info("count()");
+        try {
+            long total = recipientRepo.count();
+            return ResponseEntity.ok(total);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Boolean> exists(int id) {
-        return null;
+        LLogging.info("exists()");
+        try {
+            boolean exists = recipientRepo.existsById(id);
+            return ResponseEntity.ok(exists);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 }

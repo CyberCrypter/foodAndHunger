@@ -135,16 +135,43 @@ public class DonorService implements ServicesStruct<DonorModel> {
 
     @Override
     public ResponseEntity<List<DonorModel>> search(String query) {
-        return null;
+        LLogging.info("search()");
+        try {
+            List<DonorModel> result = donorRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+            if (result.isEmpty()) {
+                LLogging.warn("No donors found for query: " + query);
+            } else {
+                LLogging.info("Found " + result.size() + " donors for query: " + query);
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Long> count() {
-        return null;
+        LLogging.info("count()");
+        try {
+            long total = donorRepository.count();
+            return ResponseEntity.ok(total);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @Override
     public ResponseEntity<Boolean> exists(int id) {
-        return null;
+        LLogging.info("exists()");
+        try {
+            boolean exists = donorRepository.existsById(id);
+            return ResponseEntity.ok(exists);
+        } catch (Exception e) {
+            LLogging.error(e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
+
 }

@@ -66,6 +66,7 @@ public class RequestController implements ControllerStruct<RequestModel> {
         }
     }
 
+
     @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<RequestModel> update(@PathVariable int id, @RequestBody RequestModel entity) {
