@@ -10,42 +10,33 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="requests")
+@Getter
+@Setter
 public class RequestModel {
-    @Getter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id ;
+    private int id;
 
-    @Getter
-    @Setter
     private String title;
-    @Getter
-    @Setter
     private String description;
-    @Getter
-    @Setter
     private double amount;
-    @Getter
-    @Setter
     private String location;
-    @Getter
-    @Setter
-    private String type; // veg, non-veg
-    @Setter
-    @Getter
     private String address;
+    private String type;         // e.g. veg, non-veg
+    private String status = "pending"; // pending | approved | completed
+    private String photo;        // optional image of requested item
+
+    private int userId;          // who created this request
 
     @CreationTimestamp
-    @Column(name="created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-
-    RequestModel(){}
-    RequestModel(String title, String address, String description, double amount, String location){
+    public RequestModel() {}
+    public RequestModel(String title, String address, String description, double amount, String location) {
         this.title = title;
         this.description = description;
         this.amount = amount;

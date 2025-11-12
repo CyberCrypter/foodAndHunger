@@ -1,20 +1,20 @@
 package com.foodandhunger.backend.structures;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
 
-public interface ControllerStruct<T>{
-    ResponseEntity<String> create(T entity);
-    ResponseEntity<T> get(  int id);
-    ResponseEntity<List<T>> getAll();
-    ResponseEntity<T> update(int id, T entity);
-    ResponseEntity<String> delete( int id);
+/**
+ * Generic controller structure for CRUD operations.
+ * Keep it clean — no @PostMapping or @RequestParam here.
+ */
+public interface ControllerStruct<T> {
 
-
-    ResponseEntity<List<T>> search( String query); // e.g. search donors by name
-    ResponseEntity<Long> count(); // total records
-    ResponseEntity<Boolean> exists( int id); // check if entity exists
+//    ResponseEntity<String> create(T entity);           // Create
+    ResponseEntity<T> get(int id);                     // Get one
+    ResponseEntity<List<T>> getAll();                  // Get all
+    ResponseEntity<T> update(int id, T entity);        // Update
+    ResponseEntity<String> delete(int id);             // Delete
+    ResponseEntity<List<T>> search(String query);      // Search
+    ResponseEntity<Long> count();                      // Count
+    ResponseEntity<Boolean> exists(int id);            // Exists check
 }

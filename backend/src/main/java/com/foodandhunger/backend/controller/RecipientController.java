@@ -3,11 +3,10 @@ package com.foodandhunger.backend.controller;
 import com.foodandhunger.backend.models.RecipientModel;
 import com.foodandhunger.backend.services.RecipientService;
 import com.foodandhunger.backend.structures.ControllerStruct;
-import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
@@ -15,106 +14,95 @@ import java.util.List;
 public class RecipientController implements ControllerStruct<RecipientModel> {
 
     @Autowired
-    RecipientService recipientService;
+    private RecipientService recipientService;
 
-    @Override
     @PostMapping("/add")
     public ResponseEntity<String> create(@RequestBody RecipientModel entity) {
-        LLogging.info("create()");
-        try {
-            boolean created = recipientService.create(entity);
-            if (created) {
-                LLogging.info("Recipient added successfully");
-                return ResponseEntity.ok("Recipient added successfully");
-            } else {
-                return ResponseEntity.status(400).body("Failed to add recipient");
-            }
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return recipientService.create(entity)
+                ? ResponseEntity.ok("Recipient added successfully")
+                : ResponseEntity.status(400).body("Failed to add recipient");
     }
 
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<RecipientModel> get(@PathVariable int id) {
-        LLogging.info("get()");
-        try {
-            return recipientService.getById(id)
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        return recipientService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @Override
     @GetMapping("/all")
     public ResponseEntity<List<RecipientModel>> getAll() {
-        LLogging.info("getAll()");
-        try {
-            List<RecipientModel> result = recipientService.getAll();
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        return ResponseEntity.ok(recipientService.getAll());
     }
 
-    @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<RecipientModel> update(@PathVariable int id, @RequestBody RecipientModel entity) {
-        LLogging.info("update()");
-        try {
-            boolean updated = recipientService.updateById(id, entity);
-            if (updated) {
-                LLogging.info("Recipient updated successfully");
-                return ResponseEntity.ok(entity);
-            } else {
-                return ResponseEntity.status(404).build();
-            }
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        boolean updated = recipientService.updateById(id, entity);
+        return updated ? ResponseEntity.ok(entity) : ResponseEntity.status(404).build();
     }
 
-    @Override
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable int id) {
-        LLogging.info("delete()");
-        try {
-            boolean deleted = recipientService.delete(id);
-            if (deleted) {
-                return ResponseEntity.ok("Recipient deleted successfully");
-            } else {
-                return ResponseEntity.status(404).body("Recipient not found");
-            }
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return recipientService.delete(id)
+                ? ResponseEntity.ok("Recipient deleted successfully")
+                : ResponseEntity.status(404).body("Recipient not found");
     }
 
-    @Override
     @GetMapping("/search")
     public ResponseEntity<List<RecipientModel>> search(@RequestParam String query) {
-        LLogging.info("search()");
         return recipientService.search(query);
     }
 
-    @Override
     @GetMapping("/count")
     public ResponseEntity<Long> count() {
-        LLogging.info("count()");
         return recipientService.count();
     }
 
-    @Override
     @GetMapping("/exists/{id}")
     public ResponseEntity<Boolean> exists(@PathVariable int id) {
-        LLogging.info("exists()");
         return recipientService.exists(id);
+    }
+
+    //  Upload photo, certificate, signature
+    @PostMapping(value = "/{id}/upload", consumes = {"multipart/form-data"})
+    public ResponseEntity<RecipientModel> uploadFiles(
+            @PathVariable int id,
+            @RequestParam(required = false) MultipartFile photo,
+            @RequestParam(required = false) MultipartFile certificate,
+            @RequestParam(required = false) MultipartFile signature) {
+        return recipientService.uploadFiles(id, photo, certificate, signature);
+    }
+
+    //  Get by user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<RecipientModel> getByUser(@PathVariable int userId) {
+        return recipientService.getByUserId(userId);
+    }
+
+    //  Filter by location
+    @GetMapping("/location/{location}")
+    public ResponseEntity<List<RecipientModel>> getByLocation(@PathVariable String location) {
+        return recipientService.getByLocation(location);
+    }
+
+    //  Filter by organization name
+    @GetMapping("/organization/{name}")
+    public ResponseEntity<List<RecipientModel>> getByOrganization(@PathVariable String name) {
+        return recipientService.getByOrganization(name);
+    }
+
+    //  Filter by verification status
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<RecipientModel>> getByStatus(@PathVariable String status) {
+        return recipientService.getByStatus(status);
+    }
+
+    //  Approve / Reject recipient
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<RecipientModel> updateStatus(
+            @PathVariable int id,
+            @RequestParam String status,
+            @RequestParam(required = false) String remarks) {
+        return recipientService.updateStatus(id, status, remarks);
     }
 }

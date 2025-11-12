@@ -15,17 +15,17 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // ✅ disable CSRF for Postman
+                .csrf(csrf -> csrf.disable()) //  disable CSRF for Postman
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",       // ✅ signup/login routes
-                                "/api/donation/**",   // ✅ donation routes
+                                "/api/auth/**",       //  signup/login routes
+                                "/api/donation/**",   //  donation routes
                                 "/api/donor/**",
                                 "/api/request/**",
                                 "/api/recipient/**",
                                 "/api/feedback/**"
-                        ).permitAll()            // ✅ allow all these
-                        .anyRequest().permitAll() // ✅ also allow everything else (for now)
+                        ).permitAll()            //  allow all these
+                        .anyRequest().permitAll() //  also allow everything else (for now)
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
@@ -33,7 +33,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-    // ✅ CORS config
+    //  CORS config
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

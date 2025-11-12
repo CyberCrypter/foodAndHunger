@@ -5,53 +5,34 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="donations")
+@Getter
+@Setter
 public class DonationModel {
-    @Getter
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Getter
-    @Setter
-    private int donorId;
-    @Setter
-    @Getter
+    private int donorId;             // Linked donor
     private String title;
-    @Setter
-    @Getter
     private String description;
-    @Setter
-    @Getter
-    private byte[] photo;
-    @Setter
-    @Getter
+    private String type;             // food / clothes / money / etc.
+    private String photo;            // Path to donation image
     private String location;
-    @Setter
-    @Getter
     private String address;
-    @Getter
-    @Setter
-    private String type;
+
+    private String status = "pending";   // pending | approved | completed
+    private String remarks;              // Admin or system note
+
     @CreationTimestamp
-    @Column(name="created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name="updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public DonationModel(){}
-    public DonationModel(int donorId, String address, String title, String description, byte[] photo, String location, String type){
-        this.donorId =  donorId;
-        this.title = title;
-        this.description = description;
-        this.address = address;
-        this.photo = photo;
-        this.location = location;
-    }
+    public DonationModel() {}
 }

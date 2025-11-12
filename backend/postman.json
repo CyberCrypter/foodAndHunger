@@ -1,80 +1,46 @@
 {
   "info": {
+    "_postman_id": "f0b0e7f2-8a12-4acb-b2c3-5a6d12a2c987",
     "name": "Food And Hunger API Collection",
-    "_postman_id": "c67db3a4-77e2-40d0-91b9-bff23c07bbee",
-    "description": "Postman Collection for all FoodAndHunger backend REST APIs — Donation, Donor, Recipient, Request, and Feedback Controllers",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Donation",
+      "name": "User",
       "item": [
         {
-          "name": "Add Donation",
+          "name": "Signup",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/donation/add" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Food Packet\",\n  \"description\": \"50 food packets available\",\n  \"type\": \"Food\",\n  \"photo\": \"image.jpg\",\n  \"location\": \"Delhi\",\n  \"address\": \"Sector 10, Rohini\"\n}"
-            }
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"12345\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/user/signup" }
           }
         },
         {
-          "name": "Get Donation by ID",
+          "name": "Login",
           "request": {
-            "method": "GET",
-            "url": { "raw": "http://localhost:8080/api/donation/1" }
-          }
-        },
-        {
-          "name": "Get All Donations",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "http://localhost:8080/api/donation/all" }
-          }
-        },
-        {
-          "name": "Update Donation",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/donation/update/1" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Donation\",\n  \"description\": \"Updated description\",\n  \"type\": \"Clothes\",\n  \"photo\": \"photo.jpg\",\n  \"location\": \"Noida\",\n  \"address\": \"Sector 62\"\n}"
-            }
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"12345\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/user/login" }
           }
         },
         {
-          "name": "Delete Donation",
-          "request": {
-            "method": "DELETE",
-            "url": { "raw": "http://localhost:8080/api/donation/delete/1" }
-          }
-        },
-        {
-          "name": "Search Donation",
+          "name": "Get All Users",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://localhost:8080/api/donation/search?query=food"
-            }
-          }
-        },
-        {
-          "name": "Count Donations",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "http://localhost:8080/api/donation/count" }
-          }
-        },
-        {
-          "name": "Exists Donation",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "http://localhost:8080/api/donation/exists/1" }
+            "url": { "raw": "http://localhost:8080/api/auth/user/" }
           }
         }
       ]
@@ -86,49 +52,38 @@
           "name": "Add Donor",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/donor/add" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Manisha\",\n  \"age\": 25,\n  \"address\": \"Delhi\",\n  \"phone\": \"9876543210\",\n  \"email\": \"manisha@gmail.com\",\n  \"aadhaar\": \"123456789012\",\n  \"pan\": \"ABCDE1234F\",\n  \"organizationName\": \"FoodCare\",\n  \"userId\": 101\n}"
-            }
+              "raw": "{\n  \"userId\": 1,\n  \"name\": \"John Donor\",\n  \"age\": 35,\n  \"email\": \"donor@example.com\",\n  \"phone\": \"9876543210\",\n  \"location\": \"Delhi\",\n  \"organizationName\": \"Helping Hands\",\n  \"address\": \"Connaught Place\",\n  \"pan\": \"ABCDE1234F\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/donor/add" }
           }
         },
         {
-          "name": "Get Donor by ID",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/donor/1" } }
-        },
-        {
-          "name": "Get All Donors",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/donor/all" } }
-        },
-        {
-          "name": "Update Donor",
+          "name": "Upload Donor Files",
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/donor/update/1" },
+            "method": "POST",
+            "header": [],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Donor\",\n  \"age\": 26,\n  \"address\": \"Noida\",\n  \"phone\": \"9123456780\",\n  \"email\": \"updated@gmail.com\",\n  \"organizationName\": \"HelpingHands\"\n}"
-            }
+              "mode": "formdata",
+              "formdata": [
+                { "key": "photo", "type": "file", "src": "" },
+                { "key": "certificate", "type": "file", "src": "" },
+                { "key": "signature", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "http://localhost:8080/api/donor/1/upload" }
           }
         },
         {
-          "name": "Delete Donor",
-          "request": { "method": "DELETE", "url": { "raw": "http://localhost:8080/api/donor/delete/1" } }
-        },
-        {
-          "name": "Search Donor",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/donor/search?query=manisha" } }
-        },
-        {
-          "name": "Count Donors",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/donor/count" } }
-        },
-        {
-          "name": "Exists Donor",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/donor/exists/1" } }
+          "name": "Get Donor by User ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/donor/user/1" }
+          }
         }
       ]
     },
@@ -139,49 +94,62 @@
           "name": "Add Recipient",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/recipient/add" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"NGO Trust\",\n  \"address\": \"Sector 5, Gurugram\",\n  \"phone\": \"9998887776\",\n  \"email\": \"trust@gmail.com\",\n  \"userId\": 201\n}"
-            }
+              "raw": "{\n  \"userId\": 2,\n  \"name\": \"Rita Receiver\",\n  \"age\": 29,\n  \"address\": \"Noida\",\n  \"organizationName\": \"Care4All\",\n  \"location\": \"Noida\",\n  \"phone\": \"9998887777\",\n  \"email\": \"rita@example.com\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/recipient/add" }
           }
         },
         {
-          "name": "Get Recipient by ID",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/recipient/1" } }
-        },
-        {
-          "name": "Get All Recipients",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/recipient/all" } }
-        },
-        {
-          "name": "Update Recipient",
+          "name": "Search Recipient by Name",
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/recipient/update/1" },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Trust\",\n  \"address\": \"Updated Address\",\n  \"email\": \"updated@ngo.com\",\n  \"phone\": \"8887776665\"\n}"
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/recipient/search?query=rita"
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Donation",
+      "item": [
+        {
+          "name": "Add Donation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "donorId", "value": "1", "type": "text" },
+                { "key": "title", "value": "Food Packets", "type": "text" },
+                { "key": "description", "value": "10 packets of rice and dal", "type": "text" },
+                { "key": "photo", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "http://localhost:8080/api/donation/add" }
           }
         },
         {
-          "name": "Delete Recipient",
-          "request": { "method": "DELETE", "url": { "raw": "http://localhost:8080/api/recipient/delete/1" } }
+          "name": "Get All Donations",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/donation/all" }
+          }
         },
         {
-          "name": "Search Recipient",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/recipient/search?query=trust" } }
-        },
-        {
-          "name": "Count Recipients",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/recipient/count" } }
-        },
-        {
-          "name": "Exists Recipient",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/recipient/exists/1" } }
+          "name": "Approve Donation",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:8080/api/donation/1/status?status=approved&remarks=valid+donation"
+            }
+          }
         }
       ]
     },
@@ -192,49 +160,22 @@
           "name": "Add Request",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/request/add" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Need Blankets\",\n  \"description\": \"Urgent help required\",\n  \"type\": \"Clothes\",\n  \"location\": \"Delhi\",\n  \"address\": \"Sector 7\"\n}"
-            }
+              "raw": "{\n  \"title\": \"Need blankets\",\n  \"description\": \"For 50 people in shelter\",\n  \"amount\": 50,\n  \"location\": \"Delhi\",\n  \"type\": \"Non-food\",\n  \"address\": \"Sector 12\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/request/add" }
           }
-        },
-        {
-          "name": "Get Request by ID",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/request/1" } }
         },
         {
           "name": "Get All Requests",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/request/all" } }
-        },
-        {
-          "name": "Update Request",
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/request/update/1" },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Request\",\n  \"description\": \"Updated message\",\n  \"type\": \"Food\",\n  \"location\": \"Noida\",\n  \"address\": \"Sector 12\"\n}"
-            }
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/request/all" }
           }
-        },
-        {
-          "name": "Delete Request",
-          "request": { "method": "DELETE", "url": { "raw": "http://localhost:8080/api/request/delete/1" } }
-        },
-        {
-          "name": "Search Request",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/request/search?query=help" } }
-        },
-        {
-          "name": "Count Requests",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/request/count" } }
-        },
-        {
-          "name": "Exists Request",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/request/exists/1" } }
         }
       ]
     },
@@ -245,49 +186,29 @@
           "name": "Add Feedback",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/feedback/add" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": 501,\n  \"message\": \"Great donation experience!\",\n  \"star\": 5\n}"
-            }
+              "raw": "{\n  \"userId\": 1,\n  \"message\": \"Excellent service!\",\n  \"star\": 5\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/feedback/add" }
           }
-        },
-        {
-          "name": "Get Feedback by ID",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/feedback/1" } }
         },
         {
           "name": "Get All Feedbacks",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/feedback/all" } }
-        },
-        {
-          "name": "Update Feedback",
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "http://localhost:8080/api/feedback/update/1" },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": 501,\n  \"message\": \"Updated feedback message\",\n  \"star\": 4\n}"
-            }
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/feedback/all" }
           }
         },
         {
-          "name": "Delete Feedback",
-          "request": { "method": "DELETE", "url": { "raw": "http://localhost:8080/api/feedback/delete/1" } }
-        },
-        {
-          "name": "Search Feedback",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/feedback/search?query=great" } }
-        },
-        {
-          "name": "Count Feedbacks",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/feedback/count" } }
-        },
-        {
-          "name": "Exists Feedback",
-          "request": { "method": "GET", "url": { "raw": "http://localhost:8080/api/feedback/exists/1" } }
+          "name": "Get Average Rating",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/feedback/average" }
+          }
         }
       ]
     }

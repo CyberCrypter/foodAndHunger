@@ -3,11 +3,10 @@ package com.foodandhunger.backend.controller;
 import com.foodandhunger.backend.models.FeedbackModel;
 import com.foodandhunger.backend.services.FeedbackService;
 import com.foodandhunger.backend.structures.ControllerStruct;
-import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
@@ -15,111 +14,85 @@ import java.util.List;
 public class FeedbackController implements ControllerStruct<FeedbackModel> {
 
     @Autowired
-    FeedbackService feedbackService;
+    private FeedbackService feedbackService;
 
-    @Override
+    //  Create feedback
     @PostMapping("/add")
     public ResponseEntity<String> create(@RequestBody FeedbackModel entity) {
-        LLogging.info("create()");
-        try {
-            boolean created = feedbackService.create(entity);
-            if (created) {
-                LLogging.info("Feedback added successfully");
-                return ResponseEntity.ok("Feedback added successfully");
-            } else {
-                LLogging.warn("Failed to add feedback");
-                return ResponseEntity.status(400).body("Failed to add feedback");
-            }
-        } catch (Exception e) {
-            LLogging.error("Something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return feedbackService.create(entity)
+                ? ResponseEntity.ok("Feedback added successfully")
+                : ResponseEntity.status(400).body("Failed to add feedback");
     }
 
-    @Override
-    @GetMapping("/{id}")
-    public ResponseEntity<FeedbackModel> get(@PathVariable int id) {
-        LLogging.info("get()");
-        try {
-            return feedbackService.getById(id)
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> {
-                        LLogging.warn("Feedback not found, id: " + id);
-                        return ResponseEntity.notFound().build();
-                    });
-        } catch (Exception e) {
-            LLogging.error("Error fetching feedback: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+    //  Upload photo
+    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    public ResponseEntity<FeedbackModel> uploadPhoto(@PathVariable int id,
+                                                     @RequestParam("photo") MultipartFile photo) {
+        return feedbackService.uploadPhoto(id, photo);
     }
 
-    @Override
+    //  Get all feedbacks
     @GetMapping("/all")
     public ResponseEntity<List<FeedbackModel>> getAll() {
-        LLogging.info("getAll()");
-        try {
-            List<FeedbackModel> result = feedbackService.getAll();
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            LLogging.error("Error fetching all feedback: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        return ResponseEntity.ok(feedbackService.getAll());
     }
 
-    @Override
+    //  Get feedback by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<FeedbackModel> get(@PathVariable int id) {
+        return feedbackService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //  Update feedback
     @PutMapping("/update/{id}")
     public ResponseEntity<FeedbackModel> update(@PathVariable int id, @RequestBody FeedbackModel entity) {
-        LLogging.info("update()");
-        try {
-            boolean updated = feedbackService.updateById(id, entity);
-            if (updated) {
-                LLogging.info("Feedback updated successfully");
-                return ResponseEntity.ok(entity);
-            } else {
-                return ResponseEntity.status(404).build();
-            }
-        } catch (Exception e) {
-            LLogging.error("Error updating feedback: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        boolean updated = feedbackService.updateById(id, entity);
+        return updated ? ResponseEntity.ok(entity) : ResponseEntity.status(404).build();
     }
 
-    @Override
+    //  Delete feedback
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable int id) {
-        LLogging.info("delete()");
-        try {
-            boolean deleted = feedbackService.delete(id);
-            if (deleted) {
-                LLogging.info("Feedback deleted successfully");
-                return ResponseEntity.ok("Feedback deleted successfully");
-            } else {
-                return ResponseEntity.status(404).body("Feedback not found");
-            }
-        } catch (Exception e) {
-            LLogging.error("Error deleting feedback: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return feedbackService.delete(id)
+                ? ResponseEntity.ok("Feedback deleted successfully")
+                : ResponseEntity.status(404).body("Feedback not found");
     }
 
-    @Override
+    //  Search feedbacks
     @GetMapping("/search")
     public ResponseEntity<List<FeedbackModel>> search(@RequestParam String query) {
-        LLogging.info("search()");
         return feedbackService.search(query);
     }
 
-    @Override
+    //  Count
     @GetMapping("/count")
     public ResponseEntity<Long> count() {
-        LLogging.info("count()");
         return feedbackService.count();
     }
 
-    @Override
+    //  Exists
     @GetMapping("/exists/{id}")
     public ResponseEntity<Boolean> exists(@PathVariable int id) {
-        LLogging.info("exists()");
         return feedbackService.exists(id);
+    }
+
+    //  By user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<FeedbackModel>> getByUser(@PathVariable int userId) {
+        return feedbackService.getByUser(userId);
+    }
+
+    //  By star rating
+    @GetMapping("/star/{star}")
+    public ResponseEntity<List<FeedbackModel>> getByStar(@PathVariable int star) {
+        return feedbackService.getByStar(star);
+    }
+
+    //  Average rating
+    @GetMapping("/average")
+    public ResponseEntity<Double> getAverageRating() {
+        return feedbackService.getAverageRating();
     }
 }

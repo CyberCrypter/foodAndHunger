@@ -6,32 +6,82 @@ import com.foodandhunger.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth/user")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
+    //  Register new user
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody User s) {
-        String msg = userService.signup(s);
-        return ResponseEntity.ok(msg);
+    public ResponseEntity<String> signup(@RequestBody User user) {
+        return userService.signup(user);
     }
 
+    //  Login
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        boolean success = userService.validateUser(request.getUsername(), request.getPassword());
-        if (success) {
-            return ResponseEntity.ok("login successful for user: " + request.getUsername());
-        } else {
-            return ResponseEntity.status(401).body("invalid credentials");
-        }
+    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+        return userService.login(request.getUsername(), request.getPassword());
     }
 
+    //  Get all users
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return userService.getAll();
+    }
+
+    //  Get single user
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable int id) {
+        return userService.getById(id);
+    }
+
+    //  Change password
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable int id,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword) {
+        return userService.changePassword(id, oldPassword, newPassword);
+    }
+
+    //  Update username/email
+    @PutMapping("/{id}/update")
+    public ResponseEntity<User> updateUserInfo(
+            @PathVariable int id,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email) {
+        return userService.updateUserInfo(id, username, email);
+    }
+
+    //  Upload or update profile photo
+    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    public ResponseEntity<User> updateProfilePhoto(
+            @PathVariable int id,
+            @RequestParam("photo") MultipartFile photo) {
+        return userService.updateProfilePhoto(id, photo);
+    }
+
+    //  Delete user account
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
+        return userService.deleteUser(id);
+    }
+
+    //  Search users by name or email
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam("query") String query) {
+        return userService.search(query);
+    }
+
+    //  Default welcome route
     @GetMapping("/")
-    public ResponseEntity<String> hello(){
-        String str = "Welcome to food and hunger";
-        return ResponseEntity.ok(str);
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.ok("Welcome to Food & Hunger API!");
     }
 }

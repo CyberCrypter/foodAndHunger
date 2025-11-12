@@ -3,10 +3,10 @@ package com.foodandhunger.backend.controller;
 import com.foodandhunger.backend.models.RequestModel;
 import com.foodandhunger.backend.services.RequestService;
 import com.foodandhunger.backend.structures.ControllerStruct;
-import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,112 +15,77 @@ import java.util.List;
 public class RequestController implements ControllerStruct<RequestModel> {
 
     @Autowired
-    RequestService requestService;
+    private RequestService requestService;
 
-    @Override
     @PostMapping("/add")
     public ResponseEntity<String> create(@RequestBody RequestModel entity) {
-        LLogging.info("create()");
-        try {
-            boolean save = requestService.create(entity);
-            if (save) {
-                LLogging.info("Request added successfully");
-                return ResponseEntity.ok("Request added successfully");
-            } else {
-                LLogging.warn("Request could not be saved");
-                return ResponseEntity.status(400).body("Failed to add request");
-            }
-        } catch (Exception e) {
-            LLogging.error("something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return requestService.create(entity)
+                ? ResponseEntity.ok("Request added successfully")
+                : ResponseEntity.status(400).body("Failed to add request");
     }
 
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<RequestModel> get(@PathVariable int id) {
-        LLogging.info("get()");
-        try {
-            return requestService.getById(id)
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> {
-                        LLogging.warn("Request not found");
-                        return ResponseEntity.notFound().build();
-                    });
-        } catch (Exception e) {
-            LLogging.error("something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        return requestService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @Override
     @GetMapping("/all")
     public ResponseEntity<List<RequestModel>> getAll() {
-        LLogging.info("getAll()");
-        try {
-            List<RequestModel> result = requestService.getAll();
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            LLogging.error("something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        return ResponseEntity.ok(requestService.getAll());
     }
 
-
-    @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<RequestModel> update(@PathVariable int id, @RequestBody RequestModel entity) {
-        LLogging.info("update()");
-        try {
-            boolean updated = requestService.updateById(id, entity);
-            if (updated) {
-                LLogging.info("Request updated successfully");
-                return ResponseEntity.ok(entity);
-            } else {
-                return ResponseEntity.status(404).build();
-            }
-        } catch (Exception e) {
-            LLogging.error("something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
+        boolean updated = requestService.updateById(id, entity);
+        return updated ? ResponseEntity.ok(entity) : ResponseEntity.status(404).build();
     }
 
-    @Override
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable int id) {
-        LLogging.info("delete()");
-        try {
-            boolean deleted = requestService.delete(id);
-            if (deleted) {
-                LLogging.info("Request deleted successfully");
-                return ResponseEntity.ok("Request deleted successfully");
-            } else {
-                return ResponseEntity.status(404).body("Request not found");
-            }
-        } catch (Exception e) {
-            LLogging.error("something went wrong: " + e.getMessage());
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        return requestService.delete(id)
+                ? ResponseEntity.ok("Request deleted successfully")
+                : ResponseEntity.status(404).body("Request not found");
     }
 
-    @Override
     @GetMapping("/search")
     public ResponseEntity<List<RequestModel>> search(@RequestParam String query) {
-        LLogging.info("search()");
         return requestService.search(query);
     }
 
-    @Override
     @GetMapping("/count")
     public ResponseEntity<Long> count() {
-        LLogging.info("count()");
         return requestService.count();
     }
 
-    @Override
     @GetMapping("/exists/{id}")
     public ResponseEntity<Boolean> exists(@PathVariable int id) {
-        LLogging.info("exists()");
         return requestService.exists(id);
+    }
+
+    //  New: Requests by user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<RequestModel>> getByUser(@PathVariable int userId) {
+        return requestService.getByUser(userId);
+    }
+
+    //  New: Requests by location
+    @GetMapping("/location/{location}")
+    public ResponseEntity<List<RequestModel>> getByLocation(@PathVariable String location) {
+        return requestService.getByLocation(location);
+    }
+
+    //  New: Requests by status
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<RequestModel>> getByStatus(@PathVariable String status) {
+        return requestService.getByStatus(status);
+    }
+
+    //  New: Upload photo for request
+    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    public ResponseEntity<RequestModel> uploadPhoto(@PathVariable int id,
+                                                    @RequestParam("photo") MultipartFile photo) {
+        return requestService.uploadPhoto(id, photo);
     }
 }
