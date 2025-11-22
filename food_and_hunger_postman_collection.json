@@ -1,0 +1,945 @@
+{
+    "info": {
+        "_postman_id": "food-and-hunger-api",
+        "name": "Food and Hunger API",
+        "description": "API collection for the Food and Hunger backend application.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [       
+        {
+            "name": "User Auth",
+            "item": [
+                {
+                    "name": "Signup",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/signup",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                "signup"
+                            ]
+                        },
+                        "description": "Register a new user."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                "login"
+                            ]
+                        },
+                        "description": "Login user."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                "all"
+                            ]
+                        },
+                        "description": "Retrieve all users."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Retrieve a single user by ID."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update User Info",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/:id/update?username=newname&email=new@example.com&latitude=12.9716&longitude=77.5946",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                ":id",
+                                "update"
+                            ],
+                            "query": [
+                                {
+                                    "key": "username",
+                                    "value": "newname"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "new@example.com"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946"
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Update user information including location."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change Password",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/:id/password?oldPassword=old&newPassword=new",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                ":id",
+                                "password"
+                            ],
+                            "query": [
+                                {
+                                    "key": "oldPassword",
+                                    "value": "old"
+                                },
+                                {
+                                    "key": "newPassword",
+                                    "value": "new"
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Change user password."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Upload Profile Photo",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "photo",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/:id/photo",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                ":id",
+                                "photo"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Upload user profile photo."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Delete a user."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/user/search?query=test",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "user",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "test"
+                                }
+                            ]
+                        },
+                        "description": "Search users by username or email."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "User authentication and management endpoints."
+        },
+        {
+            "name": "Donation",
+            "item": [
+                {
+                    "name": "Add Donation",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "donorId",
+                                    "value": "1",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "title",
+                                    "value": "Food Donation",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Rice and Dal",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "Food",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Bangalore",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "MG Road",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "photo",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/donation/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donation",
+                                "add"
+                            ]
+                        },
+                        "description": "Create a new donation."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Donations",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/donation/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donation",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all donations."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Donation by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/donation/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donation",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Get donation by ID."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Donation Status",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/donation/:id/status?status=approved&remarks=Verified",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donation",
+                                ":id",
+                                "status"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "approved"
+                                },
+                                {
+                                    "key": "remarks",
+                                    "value": "Verified"
+                                }
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Update donation status."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Donation management endpoints."
+        },
+        {
+            "name": "Donor",
+            "item": [
+                {
+                    "name": "Add Donor",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "John Doe",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "john@example.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "9876543210",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Whitefield",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Bangalore",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "organizationName",
+                                    "value": "NGO",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "pan",
+                                    "value": "ABCDE1234F",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "aadhaar",
+                                    "value": "123456789012",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "age",
+                                    "value": "30",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "photo",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "organizationCertificate",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "signature",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/donor/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donor",
+                                "add"
+                            ]
+                        },
+                        "description": "Register a new donor."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Donors",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/donor/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donor",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all donors."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Donor management endpoints."
+        },
+        {
+            "name": "Recipient",
+            "item": [
+                {
+                    "name": "Add Recipient",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "userId",
+                                    "value": "1",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "Jane Doe",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "jane@example.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "9123456789",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Koramangala",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Bangalore",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "organizationName",
+                                    "value": "Orphanage",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "pan",
+                                    "value": "FGHIJ5678K",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "aadhaar",
+                                    "value": "987654321098",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "age",
+                                    "value": "25",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/recipient/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recipient",
+                                "add"
+                            ]
+                        },
+                        "description": "Register a new recipient."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Recipients",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/recipient/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "recipient",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all recipients."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Recipient management endpoints."
+        },
+        {
+            "name": "Request",
+            "item": [
+                {
+                    "name": "Add Request",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "userId",
+                                    "value": "1",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "title",
+                                    "value": "Need Food",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "For 50 people",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "amount",
+                                    "value": "1000",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Bangalore",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Indiranagar",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "Veg",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/request/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "request",
+                                "add"
+                            ]
+                        },
+                        "description": "Create a new request."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/request/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "request",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all requests."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Request management endpoints."
+        },
+        {
+            "name": "Volunteer",
+            "item": [
+                {
+                    "name": "Add Volunteer",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Volunteer Name",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "volunteer@example.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "8888888888",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Jayanagar",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Bangalore",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "12.9716",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "77.5946",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "aadhaarCard",
+                                    "value": "112233445566",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "panCard",
+                                    "value": "LMNOP9012Q",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "availability",
+                                    "value": "Weekends",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "skills",
+                                    "value": "Driving",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "reason",
+                                    "value": "To help",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "emergencyContactPhone",
+                                    "value": "7777777777",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/volunteer/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "volunteer",
+                                "add"
+                            ]
+                        },
+                        "description": "Register a new volunteer."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Volunteers",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/volunteer/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "volunteer",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all volunteers."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Volunteer management endpoints."
+        },
+        {
+            "name": "Feedback",
+            "item": [
+                {
+                    "name": "Add Feedback",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"userId\": 1,\n    \"message\": \"Great app!\",\n    \"star\": 5,\n    \"category\": \"App\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/feedback/add",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback",
+                                "add"
+                            ]
+                        },
+                        "description": "Submit feedback."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Feedbacks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/feedback/all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback",
+                                "all"
+                            ]
+                        },
+                        "description": "Get all feedbacks."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Feedback management endpoints."
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080/api",
+            "type": "string"
+        }
+    ]
+}
