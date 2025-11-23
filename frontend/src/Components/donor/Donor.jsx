@@ -210,7 +210,7 @@ const Donor = () => {
                                     </span>
                                 </div>
                                 <p className="mt-4 sm:mt-0 text-lg opacity-80">
-                                    Keep pushing! Just **{donorData.nextGoal.meals - donorData.mealsDonated}** more meals to reach your next tier goal.
+                                    Keep pushing! Just {donorData.nextGoal.meals - donorData.mealsDonated} more meals to reach your next tier goal.
                                 </p>
                             </div>
                             <div className="absolute inset-0 bg-green-500/5 opacity-80 animate-pulse-slower"></div>

@@ -15,6 +15,7 @@ import About from './pages/main/About';
 import JoinUs from './pages/Auth/JoinUs';
 import VDashboard from './pages/volunteer/VDashboard';
 import VolunteerDetail from './pages/volunteer/VolunteerDetail';
+import DonationFormModal from './Components/donor/DonorFoodListingForm';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -55,11 +56,16 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <RDashboard />
+
       },
       {
         path: "details/:recipient_id",
         element: <RecipientDetail />
       },
+      {
+        path: "recipient/form",
+        element: <DonationFormModal/>
+      }
     ]
   },
   {

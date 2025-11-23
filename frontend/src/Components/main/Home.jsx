@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+// /*  */import React, { useState, useEffect } from "react";
+import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
+import DonorFoodListing from "../donor/DonorFoodListingForm";
+import DonorFoodList from "../donor/DonorFoodList";
+import RecipientListing from "../recipient/RecipientListing";
+import { useEffect, useState } from "react";
 
-import { MapPin, Calendar, CheckCircle, AlertCircle, ArrowRight, Heart, Utensils, Clock, Navigation } from "lucide-react";
-import HomePageCrousel from "../utils/HomePageCrousel";
-import HomePageStates from "../utils/HomePageStates";
 
-const Home = ({ publicAxiosInstance }) => {
-    const [donations, setDonations] = useState([]);
-    const [requests, setRequests] = useState([]);
-    const [donors, setDonors] = useState({}); // Map of donorId -> donorData
-    const [loading, setLoading] = useState(true);
+const images = [
+    banner1,
+    banner2,
+    banner3,
+    banner4,
+];
 
     useEffect(() => {
         const fetchData = async () => {

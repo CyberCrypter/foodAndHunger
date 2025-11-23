@@ -103,10 +103,10 @@ const About = () => {
               </div>
             </div>
             <p className="mt-4 text-lg leading-relaxed opacity-80">
-              Our journey began in **2015** with a small group of volunteers distributing surplus food in a local park. We quickly realized the immense need and the potential to create a systematic, scalable solution.
+              Our journey began in 2015 with a small group of volunteers distributing surplus food in a local park. We quickly realized the immense need and the potential to create a systematic, scalable solution.
             </p>
             <p className="mt-4 text-lg leading-relaxed opacity-80">
-              Today, Food & Hunger is a national network, bridging the gap between food waste and those struggling with food insecurity. We've scaled our operations, embraced technology, and built a community of over **1,200 active donors** and **300 dedicated volunteers**. Every meal we donate is a testament to the power of collective action.
+              Today, Food & Hunger is a national network, bridging the gap between food waste and those struggling with food insecurity. We've scaled our operations, embraced technology, and built a community of over 1,200 active donors and 300 dedicated volunteers. Every meal we donate is a testament to the power of collective action.
             </p>
             <button className="mt-8 relative overflow-hidden px-6 py-2 rounded-xl font-semibold shadow-md transform transition-all duration-300 hover:scale-105 group  bg-green-600 hover:bg-green-700">
               <span className="relative flex items-center gap-2">
@@ -158,7 +158,7 @@ const About = () => {
                 Mission Statement
               </h3>
               <p className="text-xl leading-relaxed">
-                **To mobilize resources, eliminate food waste, and provide consistent, nutritious meals to vulnerable populations—fostering dignity and building a hunger-free future for all.**
+                To mobilize resources, eliminate food waste, and provide consistent, nutritious meals to vulnerable populations—fostering dignity and building a hunger-free future for all.
               </p>
             </div>
           </div>

@@ -77,7 +77,7 @@ const DonationFormModal = ({ isOpen, onClose, needDetails }) => {
                 {needDetails && (
                     <div className="p-3 mb-4 rounded-lg border border-green-500/50 bg-green-50/50 text-sm font-medium">
                         <p className="font-semibold text-green-700">Fulfilling Need For:</p>
-                        <p className="opacity-80">**{needDetails.name}** needs **{needDetails.need}** ({needDetails.type})</p>
+                        <p className="opacity-80">{needDetails.name} needs {needDetails.need} ({needDetails.type})</p>
                     </div>
                 )}
 
@@ -303,15 +303,15 @@ const RecipientListing = () => {
                                 <div className="space-y-3 pt-4 border-t border-gray-200/50">
                                     <div className="flex items-center text-sm opacity-80">
                                         <Package className="w-4 h-4 text-emerald-500 mr-2" />
-                                        <span>Type: **{need.type}**</span>
+                                        <span>Type: {need.type}</span>
                                     </div>
                                     <div className="flex items-center text-sm opacity-80">
                                         <Clock className="w-4 h-4 text-blue-500 mr-2" />
-                                        <span>Required By: **{need.time}**</span>
+                                        <span>Required By: {need.time}</span>
                                     </div>
                                     <div className="flex items-center text-sm opacity-80">
                                         <MapPin className="w-4 h-4 text-green-500 mr-2" />
-                                        <span>Location: **{need.location}**</span>
+                                        <span>Location: {need.location}</span>
                                     </div>
                                 </div>
 
