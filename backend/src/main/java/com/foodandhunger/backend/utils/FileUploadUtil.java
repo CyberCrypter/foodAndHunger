@@ -42,7 +42,8 @@ public class FileUploadUtil {
 
         // Build final filename (custom name + timestamp)
         // Sanitize custom name to remove spaces
-        String sanitizedCustomName = customName.replaceAll("\\s+", "_");
+        // Sanitize custom name to remove spaces and special characters that might break paths
+        String sanitizedCustomName = customName.replaceAll("[^a-zA-Z0-9._-]", "_");
         String fileName = sanitizedCustomName + "_" + System.currentTimeMillis() + extension;
 
         // Define target path

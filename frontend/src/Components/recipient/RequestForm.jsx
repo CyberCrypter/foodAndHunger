@@ -174,13 +174,22 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
             if (photo && createdRequestId) {
                 const photoData = new FormData();
                 photoData.append('photo', photo);
-                await axios.post(`/request/${createdRequestId}/photo`, photoData);
+                // Use fetch to avoid axios header issues with FormData
+                const response = await fetch(`http://localhost:8080/api/request/${createdRequestId}/photo`, {
+                    method: 'POST',
+                    body: photoData,
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server responded with ${response.status}: ${errorText}`);
+                }
             }
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Error uploading photo:", error);
-            alert("Failed to upload photo");
+            alert(`Failed to upload photo: ${error.message}`);
         } finally {
             setLoading(false);
         }

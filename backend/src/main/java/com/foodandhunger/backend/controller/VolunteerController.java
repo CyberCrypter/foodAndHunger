@@ -41,7 +41,7 @@ public class VolunteerController implements ControllerStruct<VolunteerModel> {
     @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<VolunteerModel> update(@PathVariable int id,
-                                                 @RequestBody VolunteerModel entity) {
+            @RequestBody VolunteerModel entity) {
         boolean updated = volunteerService.updateById(id, entity);
         return updated ? ResponseEntity.ok(entity)
                 : ResponseEntity.status(404).build();
@@ -80,9 +80,9 @@ public class VolunteerController implements ControllerStruct<VolunteerModel> {
     }
 
     // Upload volunteer profile photo
-    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
     public ResponseEntity<VolunteerModel> uploadPhoto(@PathVariable int id,
-                                                      @RequestParam("photo") MultipartFile file) {
+            @RequestParam("photo") MultipartFile file) {
         return volunteerService.uploadProfilePhoto(id, file);
     }
 }

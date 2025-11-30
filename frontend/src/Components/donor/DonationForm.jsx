@@ -174,13 +174,22 @@ const DonationForm = ({ isOpen, onClose, onSuccess, donation, donorId, axios }) 
             if (photo && createdDonationId) {
                 const photoData = new FormData();
                 photoData.append('photo', photo);
-                await axios.post(`/donation/${createdDonationId}/photo`, photoData);
+                // Use fetch to avoid axios header issues with FormData
+                const response = await fetch(`http://localhost:8080/api/donation/${createdDonationId}/photo`, {
+                    method: 'POST',
+                    body: photoData,
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server responded with ${response.status}: ${errorText}`);
+                }
             }
             onSuccess();
             onClose();
         } catch (error) {
             console.error("Error uploading photo:", error);
-            alert("Failed to upload photo");
+            alert(`Failed to upload photo: ${error.message}`);
         } finally {
             setLoading(false);
         }

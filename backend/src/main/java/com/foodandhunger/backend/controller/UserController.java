@@ -28,10 +28,12 @@ public class UserController {
         return userService.login(request.getUsername(), request.getPassword());
     }
 
-    //  Get all users
+    //  Get all users (supports pagination)
     @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return userService.getAll();
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return userService.getAll(page, size);
     }
 
     //  Get single user

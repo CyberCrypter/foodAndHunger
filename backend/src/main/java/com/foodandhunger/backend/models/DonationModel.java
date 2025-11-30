@@ -8,7 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="donations")
+@Table(name = "donations")
 @Getter
 @Setter
 public class DonationModel {
@@ -17,17 +17,19 @@ public class DonationModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int donorId;             // Linked donor
+    private int donorId; // Linked donor
     @Column(unique = true)
     private String title;
     private String description;
-    private String type;             // food / clothes / money / etc.
-    private String photo;            // Path to donation image
+    private String type; // food / clothes / money / etc.
+    private String photo; // Path to donation image
     private String location;
     private String address;
+    private Double latitude;
+    private Double longitude;
 
-    private String status = "pending";   // pending | approved | completed
-    private String remarks;              // Admin or system note
+    private String status = "pending"; // pending | approved | completed
+    private String remarks; // Admin or system note
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -35,5 +37,6 @@ public class DonationModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public DonationModel() {}
+    public DonationModel() {
+    }
 }

@@ -12,34 +12,35 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) //  disable CSRF for Postman
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",       //  signup/login routes
-                                "/api/donation/**",   //  donation routes
-                                "/api/donor/**",
-                                "/api/request/**",
-                                "/api/recipient/**",
-                                "/api/feedback/**",
-                                "/api/volunteer/**"
-                        ).permitAll()            //  allow all these
-                        .anyRequest().permitAll() //  also allow everything else (for now)
-                )
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable());
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(csrf -> csrf.disable()) //  disable CSRF for Postman
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/api/auth/**", //  signup/login routes
+                                                                "/api/donation/**", //  donation routes
+                                                                "/api/donor/**",
+                                                                "/api/request/**",
+                                                                "/api/recipient/**",
+                                                                "/api/feedback/**",
+                                                                "/api/volunteer/**",
+                                                                "/api/admin/**")
+                                                .permitAll() //  allow all these
+                                                .anyRequest().permitAll() //  also allow everything else (for now)
+                                )
+                                .formLogin(form -> form.disable())
+                                .httpBasic(basic -> basic.disable());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    //  CORS config
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("*")
-                .allowedHeaders("*");
-    }
+        //  CORS config
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                                .allowedOrigins("*")
+                                .allowedMethods("*")
+                                .allowedHeaders("*");
+        }
 }

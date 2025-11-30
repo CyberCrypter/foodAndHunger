@@ -86,7 +86,7 @@ public class RequestController implements ControllerStruct<RequestModel> {
 
     //  New: Upload photo for request
     @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
-    public ResponseEntity<RequestModel> uploadPhoto(@PathVariable int id,
+    public ResponseEntity<?> uploadPhoto(@PathVariable int id,
             @RequestParam("photo") MultipartFile photo) {
         return requestService.uploadPhoto(id, photo);
     }

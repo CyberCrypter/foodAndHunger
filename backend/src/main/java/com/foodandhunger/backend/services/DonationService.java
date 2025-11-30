@@ -96,7 +96,7 @@ public class DonationService implements ServicesStruct<DonationModel> {
     }
 
     //  Upload photo
-    public ResponseEntity<DonationModel> uploadPhoto(int donationId, MultipartFile photo) {
+    public ResponseEntity<?> uploadPhoto(int donationId, MultipartFile photo) {
         try {
             DonationModel donation = donationRepo.findById(donationId)
                     .orElseThrow(() -> new RuntimeException("Donation not found"));
@@ -106,7 +106,7 @@ public class DonationService implements ServicesStruct<DonationModel> {
             donationRepo.save(donation);
             return ResponseEntity.ok(donation);
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
     }
 

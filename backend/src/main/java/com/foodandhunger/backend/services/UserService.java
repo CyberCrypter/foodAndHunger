@@ -92,7 +92,13 @@ public class UserService {
         return ResponseEntity.ok("User deleted successfully");
     }
 
-    //  Get all
+    //  Get all (paginated)
+    public ResponseEntity<org.springframework.data.domain.Page<User>> getAll(int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        return ResponseEntity.ok(userRepo.findAll(pageable));
+    }
+
+    //  Get all (legacy/list)
     public ResponseEntity<List<User>> getAll() {
         return ResponseEntity.ok(userRepo.findAll());
     }

@@ -84,7 +84,8 @@ public class VolunteerService implements ServicesStruct<VolunteerModel> {
 
     @Override
     public boolean delete(int id) {
-        if(!volunteerRepo.existsById(id)) return false;
+        if (!volunteerRepo.existsById(id))
+            return false;
         volunteerRepo.deleteById(id);
         return true;
     }
@@ -119,8 +120,7 @@ public class VolunteerService implements ServicesStruct<VolunteerModel> {
                     "uploads/volunteers",
                     volunteerId,
                     file,
-                    vol.getName()
-            );
+                    vol.getName());
 
             vol.setProfilePhotoUrl(filePath);
             volunteerRepo.save(vol);

@@ -121,7 +121,7 @@ public class RequestService implements ServicesStruct<RequestModel> {
     }
 
     //  New: Upload photo for a request
-    public ResponseEntity<RequestModel> uploadPhoto(int requestId, MultipartFile photo) {
+    public ResponseEntity<?> uploadPhoto(int requestId, MultipartFile photo) {
         try {
             RequestModel req = requestRepo.findById(requestId)
                     .orElseThrow(() -> new RuntimeException("Request not found"));
@@ -132,7 +132,7 @@ public class RequestService implements ServicesStruct<RequestModel> {
             return ResponseEntity.ok(req);
         } catch (Exception e) {
             LLogging.error("photo upload failed: " + e.getMessage());
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
     }
 }

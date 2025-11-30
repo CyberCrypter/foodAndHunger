@@ -16,6 +16,14 @@ import JoinUs from './pages/Auth/JoinUs';
 import VDashboard from './pages/volunteer/VDashboard';
 import VolunteerDetail from './pages/volunteer/VolunteerDetail';
 import Volunteer from './Components/volunteer/Volunteer';
+import AdminLayout from './Components/admin/AdminLayout';
+import AdminDashboard from './Components/admin/AdminDashboard';
+import ManageRequests from './Components/admin/ManageRequests';
+import ManageDonations from './Components/admin/ManageDonations';
+import ManageDonors from './Components/admin/ManageDonors.jsx';
+import ManageRecipients from './Components/admin/ManageRecipients.jsx';
+import ManageUsers from './Components/admin/ManageUsers.jsx';
+import ManageVolunteers from './Components/admin/ManageVolunteers';
 const router = createBrowserRouter([
     {
         path: "/",
@@ -80,6 +88,40 @@ const router = createBrowserRouter([
                 path: "details/:volunteer_id",
                 element: <VolunteerDetail />
             },
+        ]
+    },
+    {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+            {
+                path: "dashboard",
+                element: <AdminDashboard />
+            },
+            {
+                path: "requests",
+                element: <ManageRequests />
+            },
+            {
+                path: "donations",
+                element: <ManageDonations />
+            },
+            {
+                path: "users",
+                element: <ManageUsers />
+            },
+            {
+                path: "donors",
+                element: <ManageDonors />
+            },
+            {
+                path: "recipients",
+                element: <ManageRecipients />
+            },
+            {
+                path: "volunteers",
+                element: <ManageVolunteers />
+            }
         ]
     },
     {

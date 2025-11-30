@@ -68,7 +68,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
 
     //  Upload photo separately
     @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
-    public ResponseEntity<DonationModel> uploadPhoto(@PathVariable int id, @RequestParam MultipartFile photo) {
+    public ResponseEntity<?> uploadPhoto(@PathVariable int id, @RequestParam MultipartFile photo) {
         return donationService.uploadPhoto(id, photo);
     }
 

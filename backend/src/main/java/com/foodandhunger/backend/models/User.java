@@ -26,6 +26,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String role; // ADMIN, DONOR, RECIPIENT, VOLUNTEER
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

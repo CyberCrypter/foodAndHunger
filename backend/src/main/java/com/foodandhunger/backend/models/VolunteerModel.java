@@ -21,6 +21,8 @@ public class VolunteerModel {
     private String phone;
     private String address;
     private String location;
+    private Double latitude;
+    private Double longitude;
 
     @Column(unique = true)
     private String aadhaarCard;
