@@ -1,212 +1,126 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { Heart, HandHeart, Truck, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import AuthModal from '../utils/AuthModal';
+import VolunteerFormModal from './VolunteerFormModal';
+import toast from 'react-hot-toast';
 
-export default function VolunteerPage() {
-  const opportunities = [
-    {
-      title: "Restaurant Pickup Driver",
-      desc: "Collect surplus food from partner restaurants and bring to sorting center.",
-      location: "Downtown",
-      time: "Weekday mornings",
-      spots: 4,
-    },
-    {
-      title: "Food Sorting & Packaging",
-      desc: "Help sort, portion and pack donated food for distribution.",
-      location: "Warehouse A",
-      time: "Saturdays",
-      spots: 8,
-    },
-    {
-      title: "Distribution Volunteer",
-      desc: "Join teams that deliver prepared packages to shelters and communities.",
-      location: "Citywide",
-      time: "Weekends",
-      spots: 6,
-    },
-  ];
+const Volunteer = () => {
+    const { publicAxiosInstance } = useOutletContext();
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showVolunteerModal, setShowVolunteerModal] = useState(false);
 
-  const [volunteers, setVolunteers] = useState([
-    { name: "Ananya Sharma", role: "Food Pickup & Delivery", availability: "Weekends" },
-    { name: "Ravi Patel", role: "Cooking / Meal Preparation", availability: "Weekdays" },
-    { name: "Meera Das", role: "Awareness Campaigns", availability: "Evenings" },
-  ]);
+    const handleBecomeVolunteer = () => {
+        const isLoggedIn = localStorage.getItem('logged_in');
+        if (!isLoggedIn) {
+            setShowAuthModal(true);
+        } else {
+            setShowVolunteerModal(true);
+        }
+    };
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    role: "",
-    availability: "",
-  });
+    const handleLoginSuccess = () => {
+        setShowAuthModal(false);
+        setShowVolunteerModal(true);
+    };
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const roles = [
+        {
+            icon: <Truck className="w-8 h-8 text-green-600" />,
+            title: "Food Pickup & Delivery",
+            description: "Collect surplus food from donors and deliver it to designated NGOs or distribution points safely and on time."
+        },
+        {
+            icon: <CheckCircle className="w-8 h-8 text-green-600" />,
+            title: "Quality Check",
+            description: "Ensure the donated food is fresh, hygienic, and safe for consumption before it reaches the recipients."
+        },
+        {
+            icon: <Users className="w-8 h-8 text-green-600" />,
+            title: "Community Outreach",
+            description: "Identify communities in need, verify requests, and help spread awareness about the platform."
+        },
+        {
+            icon: <HandHeart className="w-8 h-8 text-green-600" />,
+            title: "Event Support",
+            description: "Assist in organizing food drives, fundraising events, and awareness campaigns to support the cause."
+        }
+    ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.role) {
-      alert("Please fill all required fields!");
-      return;
-    }
-    setVolunteers([formData, ...volunteers]);
-    alert("Thank you for volunteering!");
-    setFormData({ name: "", email: "", phone: "", role: "", availability: "" });
-  };
-
-  return (
-    <div className="min-h-screen px-6 py-10 flex flex-col items-center">
-      <div className="max-w-7xl w-full">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-2">Volunteer — Food & Hunger</h1>
-          <p>
-            Join us to recover surplus food and feed communities in need. Choose a
-            role, tell us when you're available, and help us make a difference.
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <section
-            className="lg:col-span-1 rounded-xl p-6"
-            style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-center">
-              Open Opportunities
-            </h2>
-            <div className="space-y-5">
-              {opportunities.map((opp, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-xl p-5"
-                  style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-                >
-                  <h3 className="text-lg font-medium mb-1">{opp.title}</h3>
-                  <p className="text-sm mb-2">{opp.desc}</p>
-                  <div className="flex justify-between text-sm">
-                    <span>📍 {opp.location}</span>
-                    <span>⏰ {opp.time}</span>
-                  </div>
-                  <div className="mt-4 flex justify-between items-center">
-                    <span className="text-sm">{opp.spots} spots</span>
+    return (
+        <div className="min-h-screen bg-gray-50">
+            {/* Hero Section */}
+            <div className="bg-green-600 text-white py-20 px-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="max-w-7xl mx-auto relative z-10 text-center">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6">Become a Hero</h1>
+                    <p className="text-xl md:text-2xl text-green-100 mb-8 max-w-2xl mx-auto">
+                        Join our network of dedicated volunteers and help bridge the gap between surplus food and those in need.
+                    </p>
                     <button
-                      className="px-3 py-1 rounded-md text-sm"
-                      style={{
-                        border: "1px solid #00a03d",
-                        background: "rgb(0 111 49 / 31%)",
-                      }}
+                        onClick={handleBecomeVolunteer}
+                        className="bg-white text-green-600 px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-green-50 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
                     >
-                      Join
+                        Become a Volunteer <ArrowRight className="w-5 h-5" />
                     </button>
-                  </div>
                 </div>
-              ))}
             </div>
-          </section>
 
-          <div className="lg:col-span-2 space-y-10">
-            <section
-              className="rounded-xl p-6"
-              style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-            >
-              <h2 className="text-2xl font-semibold mb-6 text-center">
-                Current Volunteers
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {volunteers.map((vol, index) => (
-                  <div
-                    key={index}
-                    className="rounded-xl p-5"
-                    style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-                  >
-                    <h3 className="text-lg font-semibold mb-1">{vol.name}</h3>
-                    <p className="text-sm mb-1">
-                      <span className="font-medium">Role:</span> {vol.role}
+            {/* Roles & Responsibilities */}
+            <div className="max-w-7xl mx-auto px-4 py-16">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">Roles & Responsibilities</h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        As a volunteer, you play a crucial role in our mission. Here are some of the key ways you can contribute.
                     </p>
-                    <p className="text-sm">
-                      <span className="font-medium">Availability:</span>{" "}
-                      {vol.availability || "Not specified"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section
-              className="rounded-xl p-8"
-              style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-            >
-              <h2 className="text-3xl font-bold text-center mb-4">
-                Become a Volunteer
-              </h2>
-              <p className="text-center mb-8">
-                Join hands in reducing food waste and feeding the hungry.
-              </p>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {["name", "email", "phone", "availability"].map((field) => (
-                  <div key={field}>
-                    <label className="block mb-2 font-medium capitalize">
-                      {field === "email"
-                        ? "Email Address"
-                        : field === "phone"
-                          ? "Phone Number"
-                          : field}
-                    </label>
-                    <input
-                      type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
-                      name={field}
-                      value={formData[field]}
-                      onChange={handleChange}
-                      required={field === "name"}
-                      className="w-full px-4 py-3 rounded-lg"
-                      style={{
-                        border: "1px solid #00a03d",
-                        background: "rgb(0 111 49 / 31%)",
-                      }}
-                    />
-                  </div>
-                ))}
-
-                <div>
-                  <label className="block mb-2 font-medium">Area of Interest</label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 rounded-lg"
-                    style={{ border: "1px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
-                  >
-                    <option value="">Select your role</option>
-                    <option value="Food Pickup & Delivery">Food Pickup & Delivery</option>
-                    <option value="Cooking / Meal Preparation">
-                      Cooking / Meal Preparation
-                    </option>
-                    <option value="Distribution & Service">Distribution & Service</option>
-                    <option value="Awareness Campaigns">Awareness Campaigns</option>
-                  </select>
                 </div>
 
-                <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    className="px-8 py-3 rounded-lg"
-                    style={{
-                      border: "2px solid #00a03d",
-                      background: "rgb(0 111 49 / 31%)",
-                    }}
-                  >
-                    Submit Application
-                  </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {roles.map((role, index) => (
+                        <div key={index} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 text-center group">
+                            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                {role.icon}
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-3">{role.title}</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                {role.description}
+                            </p>
+                        </div>
+                    ))}
                 </div>
-              </form>
+            </div>
 
-              <p className="text-center text-sm mt-8">
-                Thank you for your willingness to help those in need.
-              </p>
-            </section>
-          </div>
+            {/* Call to Action Bottom */}
+            <div className="bg-white py-16 px-4 border-t border-gray-100">
+                <div className="max-w-4xl mx-auto text-center bg-green-50 rounded-3xl p-8 md:p-12">
+                    <Heart className="w-12 h-12 text-green-600 mx-auto mb-6 fill-green-600" />
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">Ready to Make an Impact?</h2>
+                    <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+                        Your time and effort can save lives. Sign up today and start your journey as a Food & Hunger volunteer.
+                    </p>
+                    <button
+                        onClick={handleBecomeVolunteer}
+                        className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition-all"
+                    >
+                        Join Us Now
+                    </button>
+                </div>
+            </div>
+
+            {/* Modals */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onLoginSuccess={handleLoginSuccess}
+            />
+
+            <VolunteerFormModal
+                isOpen={showVolunteerModal}
+                onClose={() => setShowVolunteerModal(false)}
+                axiosInstance={publicAxiosInstance}
+            />
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
+
+export default Volunteer;

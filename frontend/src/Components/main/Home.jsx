@@ -1,17 +1,41 @@
-// /*  */import React, { useState, useEffect } from "react";
-import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
-import DonorFoodListing from "../donor/DonorFoodListingForm";
-import DonorFoodList from "../donor/DonorFoodList";
-import RecipientListing from "../recipient/RecipientListing";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
+import { MapPin, Calendar, CheckCircle, AlertCircle, ArrowRight, Heart, Utensils, Clock, Navigation, ChevronLeft, ChevronRight, Plus, Minus } from "lucide-react";
+import AuthModal from "../utils/AuthModal";
+import toast from 'react-hot-toast';
+import HomePageCrousel from "../utils/HomePageCrousel";
+import HomePageStates from "../utils/HomePageStates";
 
+const Home = () => {
+    const { publicAxiosInstance } = useOutletContext();
+    const [donations, setDonations] = useState([]);
+    const [requests, setRequests] = useState([]);
+    const [donors, setDonors] = useState({}); // Map of donorId -> donorData
+    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('donations');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [faqOpen, setFaqOpen] = useState(null);
+    const itemsPerPage = 6;
 
-const images = [
-    banner1,
-    banner2,
-    banner3,
-    banner4,
-];
+    const faqs = [
+        {
+            question: "How can I donate food?",
+            answer: "You can donate food by clicking on the 'Become a Donor' button on the home page or navigating to the donation section after logging in. Fill in the details about the food, pick a location, and submit."
+        },
+        {
+            question: "Who can request food?",
+            answer: "Anyone in need, including individuals, NGOs, and community centers, can request food. You need to register as a recipient to place requests."
+        },
+        {
+            question: "Is there a cost involved?",
+            answer: "No, the platform is completely free for both donors and recipients. Our goal is to reduce food waste and help those in need."
+        },
+        {
+            question: "How do I track my donation?",
+            answer: "Once you make a donation, you can track its status in your dashboard. You will be notified when a recipient requests it and when it is picked up."
+        }
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
