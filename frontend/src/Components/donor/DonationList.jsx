@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, MapPin, Calendar } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, Calendar, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import DonationForm from './DonationForm';
 
 import toast from 'react-hot-toast';
@@ -9,11 +9,22 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingDonation, setEditingDonation] = useState(null);
+    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, completed: 0 });
 
     const fetchDonations = async () => {
         try {
             const res = await axios.get(`/donation/donor/${donorId}`);
-            setDonations(res.data);
+            const donationData = res.data;
+            setDonations(donationData);
+            
+            // Calculate statistics
+            const calculatedStats = {
+                total: donationData.length,
+                pending: donationData.filter(d => d.status === 'pending' || !d.status).length,
+                approved: donationData.filter(d => d.status === 'approved').length,
+                completed: donationData.filter(d => d.status === 'completed').length
+            };
+            setStats(calculatedStats);
         } catch (error) {
             console.error("Error fetching donations:", error);
         } finally {
@@ -75,6 +86,49 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
 
     return (
         <div>
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-blue-600 font-medium mb-1">Total Donations</p>
+                            <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
+                        </div>
+                        <Package className="w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-yellow-600 font-medium mb-1">Pending</p>
+                            <p className="text-2xl font-bold text-yellow-900">{stats.pending}</p>
+                        </div>
+                        <Clock className="w-10 h-10 text-yellow-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-green-600 font-medium mb-1">Approved</p>
+                            <p className="text-2xl font-bold text-green-900">{stats.approved}</p>
+                        </div>
+                        <CheckCircle className="w-10 h-10 text-green-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-purple-600 font-medium mb-1">Completed</p>
+                            <p className="text-2xl font-bold text-purple-900">{stats.completed}</p>
+                        </div>
+                        <CheckCircle className="w-10 h-10 text-purple-500" />
+                    </div>
+                </div>
+            </div>
+
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">My Donations</h2>
                 <button

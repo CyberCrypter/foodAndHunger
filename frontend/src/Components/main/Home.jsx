@@ -5,6 +5,7 @@ import AuthModal from "../utils/AuthModal";
 import toast from 'react-hot-toast';
 import HomePageCrousel from "../utils/HomePageCrousel";
 import HomePageStates from "../utils/HomePageStates";
+import RequestFeed from "../donor/RequestFeed";
 
 const Home = () => {
     const { publicAxiosInstance } = useOutletContext();
@@ -47,12 +48,23 @@ const Home = () => {
                 console.log("Fetching data...");
                 const [donationsRes, requestsRes] = await Promise.all([
                     publicAxiosInstance.get("/donation/all"),
-                    publicAxiosInstance.get("/recipient/all"),
+                    publicAxiosInstance.get("/request/all"), // Changed from /recipient/all
                 ]);
                 console.log("Donations:", donationsRes.data);
                 console.log("Requests:", requestsRes.data);
-                setDonations(donationsRes.data);
-                setRequests(requestsRes.data);
+                
+                // Filter only admin-approved donations
+                const approvedDonations = donationsRes.data.filter(donation => 
+                    donation.approved === true || donation.status === 'approved'
+                );
+                
+                // Filter only admin-approved requests
+                const approvedRequests = requestsRes.data.filter(request => 
+                    request.approved === true || request.status === 'approved'
+                );
+                
+                setDonations(approvedDonations);
+                setRequests(approvedRequests);
 
                 // Fetch donor details
                 const uniqueDonorIds = [...new Set(donationsRes.data.map(d => d.donorId))];
@@ -154,9 +166,9 @@ const Home = () => {
     return (
         <div className="w-full min-h-screen bg-green-50/30">
             <HomePageCrousel />
-            <HomePageStates />
+            {/* <HomePageStates /> */}
 
-            <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">
+            <div className="max-w-7xl mx-auto px-4 py-8 space-y-16">
 
                 {/* Tabs */}
                 <div className="flex justify-center mb-8">
@@ -287,20 +299,36 @@ const Home = () => {
                         ) : (
                             currentItemsSlice.map((request) => (
                                 <div key={request.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-orange-100 group">
-                                    <div className="p-5 space-y-4">
-                                        <div>
-                                            <div className="flex justify-between items-start mb-1">
-                                                <h3 className="text-xl font-bold text-gray-800">{request.title}</h3>
-                                                <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-lg">
-                                                    {request.amount ? `${request.amount} People` : 'Any Amount'}
-                                                </span>
-                                            </div>
-                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium shadow-sm mb-2 ${request.status?.toLowerCase() === 'urgent'
-                                                ? 'bg-red-500 text-white animate-pulse'
-                                                : 'bg-orange-500 text-white'
-                                                }`}>
+                                    {/* Add image section like donations */}
+                                    <div className="relative h-48 overflow-hidden">
+                                        <img
+                                            src={request.photo ? `http://localhost:8080${request.photo}` : "https://images.unsplash.com/photo-1593759608979-8a5f6e3e0b8c?auto=format&fit=crop&q=80"}
+                                            alt={request.title}
+                                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = "https://images.unsplash.com/photo-1593759608979-8a5f6e3e0b8c?auto=format&fit=crop&q=80";
+                                            }}
+                                        />
+                                        <div className="absolute top-3 right-3">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                                                request.status?.toLowerCase() === 'urgent'
+                                                    ? 'bg-red-500 text-white animate-pulse'
+                                                    : 'bg-orange-500 text-white'
+                                            }`}>
                                                 {request.status || 'Urgent'}
                                             </span>
+                                        </div>
+                                        <div className="absolute top-3 left-3">
+                                            <span className="px-3 py-1 rounded-full text-xs font-medium shadow-sm bg-blue-100 text-blue-700 border border-blue-200">
+                                                {request.amount ? `${request.amount} People` : 'Any Amount'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 space-y-4">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-gray-800 mb-1">{request.title}</h3>
                                             <p className="text-gray-500 text-sm line-clamp-2">{request.description}</p>
                                         </div>
 
@@ -311,7 +339,7 @@ const Home = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="w-4 h-4 text-orange-500 shrink-0" />
-                                                <span>{formatDate(request.createdAt)}</span>
+                                                <span>Requested: {formatDate(request.createdAt)}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <AlertCircle className="w-4 h-4 text-orange-500 shrink-0" />
@@ -408,3 +436,58 @@ const Home = () => {
 };
 
 export default Home;
+
+// (
+//                             currentItemsSlice.map((request) => (
+//                                 <div key={request.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-orange-100 group">
+//                                     <div className="p-5 space-y-4">
+//                                         <div>
+//                                             <div className="flex justify-between items-start mb-1">
+//                                                 <h3 className="text-xl font-bold text-gray-800">{request.title}</h3>
+//                                                 <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-lg">
+//                                                     {request.amount ? `${request.amount} People` : 'Any Amount'}
+//                                                 </span>
+//                                             </div>
+//                                             <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium shadow-sm mb-2 ${request.status?.toLowerCase() === 'urgent'
+//                                                 ? 'bg-red-500 text-white animate-pulse'
+//                                                 : 'bg-orange-500 text-white'
+//                                                 }`}>
+//                                                 {request.status || 'Urgent'}
+//                                             </span>
+//                                             <p className="text-gray-500 text-sm line-clamp-2">{request.description}</p>
+//                                         </div>
+
+//                                         <div className="space-y-2 text-sm text-gray-600">
+//                                             <div className="flex items-start gap-2">
+//                                                 <MapPin className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
+//                                                 <span className="line-clamp-1">{request.address || "Address Available"}</span>
+//                                             </div>
+//                                             <div className="flex items-center gap-2">
+//                                                 <Calendar className="w-4 h-4 text-orange-500 shrink-0" />
+//                                                 <span>{formatDate(request.createdAt)}</span>
+//                                             </div>
+//                                             <div className="flex items-center gap-2">
+//                                                 <AlertCircle className="w-4 h-4 text-orange-500 shrink-0" />
+//                                                 <span>Status: {request.status || "Urgent"}</span>
+//                                             </div>
+//                                         </div>
+
+//                                         <div className="pt-4 flex gap-3 border-t border-gray-100">
+//                                             <button
+//                                                 onClick={handleDonateClick}
+//                                                 className="flex-1 py-2.5 px-4 rounded-xl font-medium text-sm bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+//                                             >
+//                                                 Donate Now
+//                                             </button>
+//                                             <button
+//                                                 onClick={() => openLiveLocation(request.latitude, request.longitude, request.address)}
+//                                                 className="p-2.5 rounded-xl bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors border border-orange-200"
+//                                                 title="Track Location"
+//                                             >
+//                                                 <Navigation className="w-5 h-5" />
+//                                             </button>
+//                                         </div>
+//                                     </div>
+//                                 </div>
+//                             ))
+//                         )

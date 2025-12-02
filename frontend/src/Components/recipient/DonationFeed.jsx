@@ -56,10 +56,13 @@ const DonationFeed = ({ axios }) => {
             // Fetch all donations. Ideally, this should be filtered by status 'active' or similar.
             // Assuming /api/donation/all returns all donations.
             const res = await axios.get('/donation/all');
-            // Filter out completed donations if needed, or backend should handle it.
-            // For now, let's assume we show all or filter client side if status is available.
-            const activeDonations = res.data.filter(d => d.status !== 'completed');
-            setDonations(activeDonations);
+            
+            // Filter only admin-approved donations and exclude completed ones
+            const approvedDonations = res.data.filter(d => 
+                (d.approved === true || d.status === 'approved') && d.status !== 'completed'
+            );
+            
+            setDonations(approvedDonations);
         } catch (error) {
             console.error("Error fetching donations:", error);
         } finally {

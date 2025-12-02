@@ -4,9 +4,14 @@ import banner2 from "../../assets/images/banner2.png";
 import banner3 from "../../assets/images/banner3.png";
 import banner4 from "../../assets/images/banner4.png";
 import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
+import RegistrationModal from "./RegistrationModal";
 
 const HomePageCrousel = () => {
     const [index, setIndex] = useState(0);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const [registerUserType, setRegisterUserType] = useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
+    
     const images = [
         banner1,
         banner2,
@@ -14,11 +19,41 @@ const HomePageCrousel = () => {
         banner4,
     ];
 
+    // Check if user is logged in and registered
+    const checkRegistrationStatus = () => {
+        const loggedIn = localStorage.getItem('logged_in') === 'true';
+        const userRole = localStorage.getItem('role');
+        
+        // If user is logged in and has a role (donor, recipient, volunteer), hide the buttons
+        if (loggedIn && userRole) {
+            setIsRegistered(true);
+        } else {
+            setIsRegistered(false);
+        }
+    };
+
     useEffect(() => {
         const timer = setInterval(() => {
             setIndex((prev) => (prev + 1) % images.length);
         }, 4000);
-        return () => clearInterval(timer);
+        
+        checkRegistrationStatus();
+        
+        // Listen for storage changes
+        const handleStorageChange = () => {
+            checkRegistrationStatus();
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Poll localStorage every 500ms to detect changes (for same-window updates)
+        const pollInterval = setInterval(checkRegistrationStatus, 500);
+        
+        return () => {
+            clearInterval(timer);
+            clearInterval(pollInterval);
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
 
     return (
@@ -54,30 +89,51 @@ const HomePageCrousel = () => {
                             Food & Hunger
                         </span>
                     </h1>
-                    <p className="text-xl md:text-2xl font-medium text-green-100 mb-4 animate-slide-down" style={{ animationDelay: '0.1s' }}>
+                    {/* <p className="text-xl md:text-2xl font-medium text-green-100 mb-4 animate-slide-down" style={{ animationDelay: '0.1s' }}>
                         Connecting Communities, Ending Hunger
-                    </p>
-                    <p className="text-lg md:text-xl mb-6 font-light animate-slide-up opacity-0 max-w-2xl mx-auto" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                    </p> */}
+                    <p 
+                        className="text-lg md:text-xl mb-6 font-light max-w-2xl mx-auto tracking-wide" 
+                        style={{ 
+                            animation: 'fade-in-up 0.8s ease-out forwards',
+                            animationDelay: '0.3s',
+                            opacity: 0
+                        }}
+                        >
                         FoodAndHunger connects restaurants, shops, and households with nearby NGOs to donate surplus food using a smart, location-based platform.
                         It reduces food waste while ensuring fresh meals reach people in need quickly and safely.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up opacity-0" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                        <button className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group">
-                            <div className="absolute inset-0 bg-green-600 transition-transform duration-300 group-hover:scale-110"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <span className="relative flex items-center gap-2">
-                                Become a Donor
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-                            </span>
-                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
-                        </button>
-                        <button className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group border-2 border-white/30 backdrop-blur-sm">
-                            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
-                            <span className="relative flex items-center gap-2">
-                                Become a Recipiet
-                            </span>
-                        </button>
-                    </div>
+                    {!isRegistered && (
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center py-8" style={{ animation: 'fade-in-up 0.8s ease-out forwards', animationDelay: '0.6s', opacity: 0 }}>
+                            <button 
+                                onClick={() => {
+                                    setRegisterUserType('donor');
+                                    setIsRegisterModalOpen(true);
+                                }}
+                                className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group"
+                            >
+                                <div className="absolute inset-0 bg-green-600 transition-transform duration-300 group-hover:scale-110"></div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <span className="relative flex items-center gap-2">
+                                    Become a Donor
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                                </span>
+                                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setRegisterUserType('recipient');
+                                    setIsRegisterModalOpen(true);
+                                }}
+                                className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group border-2 border-white/30 backdrop-blur-sm"
+                            >
+                                <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
+                                <span className="relative flex items-center gap-2">
+                                    Become a Recipient
+                                </span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
             {/* Enhanced Carousel Indicators */}
@@ -95,6 +151,19 @@ const HomePageCrousel = () => {
                     </button>
                 ))}
             </div>
+
+            {/* Registration Modal */}
+            <RegistrationModal 
+                isOpen={isRegisterModalOpen} 
+                onClose={() => {
+                    setIsRegisterModalOpen(false);
+                    // Check registration status after a short delay
+                    setTimeout(checkRegistrationStatus, 100);
+                }}
+                onRegistrationSuccess={() => {
+                    checkRegistrationStatus();
+                }}
+            />
         </div>
     )
 }

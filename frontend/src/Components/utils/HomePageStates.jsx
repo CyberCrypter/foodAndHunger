@@ -9,7 +9,7 @@ const HomePageStates = () => {
         { number: "24/7", label: "Support", icon: <Clock className="w-6 h-6" /> }
     ];
     return (
-        <div className="py-12 px-4">
+        <div className="py-0 px-4">
             <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {stats.map((stat, idx) => (

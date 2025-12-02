@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, MapPin } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, Utensils, Clock, CheckCircle, AlertCircle, Users } from 'lucide-react';
 import RequestForm from './RequestForm';
 
 import toast from 'react-hot-toast';
@@ -9,11 +9,23 @@ const RequestList = ({ recipientId, axios, recipientProfile }) => {
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingRequest, setEditingRequest] = useState(null);
+    const [stats, setStats] = useState({ total: 0, urgent: 0, completed: 0, totalPeople: 0 });
 
     const fetchRequests = async () => {
         try {
             const res = await axios.get(`/request/recipient/${recipientId}`);
-            setRequests(res.data);
+            const requestData = res.data;
+            setRequests(requestData);
+            
+            // Calculate statistics
+            const totalPeople = requestData.reduce((sum, req) => sum + (parseInt(req.amount) || 0), 0);
+            const calculatedStats = {
+                total: requestData.length,
+                urgent: requestData.filter(r => r.status?.toLowerCase() === 'urgent').length,
+                completed: requestData.filter(r => r.status?.toLowerCase() === 'completed').length,
+                totalPeople: totalPeople
+            };
+            setStats(calculatedStats);
         } catch (error) {
             console.error("Error fetching requests:", error);
         } finally {
@@ -75,6 +87,49 @@ const RequestList = ({ recipientId, axios, recipientProfile }) => {
 
     return (
         <div>
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-orange-600 font-medium mb-1">Total Requests</p>
+                            <p className="text-2xl font-bold text-orange-900">{stats.total}</p>
+                        </div>
+                        <Utensils className="w-10 h-10 text-orange-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 border border-red-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-red-600 font-medium mb-1">Urgent</p>
+                            <p className="text-2xl font-bold text-red-900">{stats.urgent}</p>
+                        </div>
+                        <AlertCircle className="w-10 h-10 text-red-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-green-600 font-medium mb-1">Completed</p>
+                            <p className="text-2xl font-bold text-green-900">{stats.completed}</p>
+                        </div>
+                        <CheckCircle className="w-10 h-10 text-green-500" />
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-blue-600 font-medium mb-1">People Served</p>
+                            <p className="text-2xl font-bold text-blue-900">{stats.totalPeople}</p>
+                        </div>
+                        <Users className="w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+            </div>
+
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">My Requests</h2>
                 <button
