@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ArrowRight, BookOpen, Target, Handshake, Users, Leaf, Heart, Award } from "lucide-react";
-
+import manisha from '../../assets/images/team/manisha.jpeg'
+import rameshwar from '../../assets/images/team/rameshwar.jpeg'
+import neeraj from '../../assets/images/team/neeraj.jpg'
 // Placeholder images for the About page
 const aboutImages = [
   "https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=1600&q=80",
@@ -53,9 +55,9 @@ const About = () => {
   ];
 
   const leadership = [
-    { name: "Anya Sharma", role: "CEO & Founder", avatar: "AS", color: "red" },
-    { name: "Ben Carter", role: "Chief Operations Officer", avatar: "BC", color: "blue" },
-    { name: "Chloe Davis", role: "Head of Community Outreach", avatar: "CD", color: "purple" },
+    { name: "Manisha Kumari", role: "Team Lead", avatar: manisha, color: "red", linkedin: "https://www.linkedin.com/in/bugsfounder/" },
+    { name: "Neeraj Passwan", role: "Team Member", avatar: neeraj, color: "blue", linkedin: "https://www.linkedin.com/in/neeraj-paswan-654547292/" },
+    { name: "Rameshawar", role: "Team Member", avatar: rameshwar, color: "purple", linkedin: "https://www.linkedin.com/in/rameshwar-7b8905292" },
   ];
 
   return (
@@ -94,7 +96,7 @@ const About = () => {
           <div className="order-2 md:order-1">
             <div className="inline-block relative mb-6">
               <h2 className="text-4xl font-bold relative inline-block">
-                From a Simple Idea
+                Our Journey
                 <div className="absolute -inset-2 bg-gradient-to-r from-green-400 to-emerald-400 opacity-20 blur-2xl animate-pulse-slow"></div>
               </h2>
               <div className="flex items-center gap-2 mt-4">
@@ -103,16 +105,21 @@ const About = () => {
               </div>
             </div>
             <p className="mt-4 text-lg leading-relaxed opacity-80">
-              Our journey began in **2015** with a small group of volunteers distributing surplus food in a local park. We quickly realized the immense need and the potential to create a systematic, scalable solution.
+              Our journey began in 2025 during the SureTrust internship on G3 DSA in Java. The session was led by Karthik Subhramanyam, a Software Tester at JIO Telecom. During one of his lectures, he asked all students to share ideas for their final project.
             </p>
             <p className="mt-4 text-lg leading-relaxed opacity-80">
-              Today, Food & Hunger is a national network, bridging the gap between food waste and those struggling with food insecurity. We've scaled our operations, embraced technology, and built a community of over **1,200 active donors** and **300 dedicated volunteers**. Every meal we donate is a testament to the power of collective action.
+              I started searching everywhere — browsing the internet, asking ChatGPT for suggestions, and going through dozens of ideas. Nothing truly clicked until I came across one simple yet powerful concept: households sharing food with the needy nearby.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed opacity-80">
+              That idea felt right. I proposed it to Karthik sir, and he approved it immediately.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed opacity-80">
+              Now, our team — Manisha, Rameshwar, and Neeraj — is working hard to build the first version of our website, turning that small idea into something that can make a real difference.
             </p>
             <button className="mt-8 relative overflow-hidden px-6 py-2 rounded-xl font-semibold shadow-md transform transition-all duration-300 hover:scale-105 group  bg-green-600 hover:bg-green-700">
-              <span className="relative flex items-center gap-2">
-                See Our Impact
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
+              <a target="_blank" className="relative flex items-center gap-2 text-white" href="https://github.com/Bugsfounder/foodAndHunger">
+                Join Development OS
+              </a>
             </button>
           </div>
           <div className="order-1 md:order-2 relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
@@ -158,7 +165,8 @@ const About = () => {
                 Mission Statement
               </h3>
               <p className="text-xl leading-relaxed">
-                **To mobilize resources, eliminate food waste, and provide consistent, nutritious meals to vulnerable populations—fostering dignity and building a hunger-free future for all.**
+                Our mission is to cut food waste and help end hunger — because in India more than 194 million people are undernourished, over 20 crore people go to sleep empty-stomach every night, and every day more than 7,000 lives are lost due to hunger.
+                We aim to connect Restorents, Hotels, households with surplus food to needy people nearby — so no meal is wasted, and no one sleeps hungry.
               </p>
             </div>
           </div>
@@ -223,15 +231,14 @@ const About = () => {
                 <div className={`absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
                 <div className="relative z-10">
                   <div className="relative inline-block mb-4">
-                    <div className={`w-24 h-24 rounded-full flex items-center justify-center  text-3xl font-bold mx-auto shadow-lg transform group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-${member.color}-500 to-${member.color}-600`}>
-                      {member.avatar}
-                    </div>
+                    <img className={`w-24 h-24 rounded-full flex items-center justify-center  text-3xl font-bold mx-auto shadow-lg transform group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-${member.color}-500 to-${member.color}-600`} src={member.avatar}>
+                    </img>
                   </div>
                   <h3 className="text-xl font-bold mb-1">{member.name}</h3>
                   <p className="text-green-600 font-semibold mb-4">{member.role}</p>
                   <div className="pt-4 border-t border-gray-100">
                     <button className="text-sm text-gray-500 hover:text-green-600 transition-colors">
-                      Connect on LinkedIn
+                      <a href={member.linkedin} target="_blank">  Connect on LinkedIn</a>
                     </button>
                   </div>
                 </div>

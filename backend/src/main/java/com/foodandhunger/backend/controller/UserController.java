@@ -77,4 +77,9 @@ public class UserController {
     public ResponseEntity<String> hello() {
         return ResponseEntity.ok("Welcome to Food & Hunger API!");
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("testing api");
+    }
 }
