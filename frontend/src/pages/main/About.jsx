@@ -156,19 +156,16 @@ const About = () => {
             </p>
           </div>
 
-          {/* Mission Statement Card */}
-          <div className=" p-8 md:p-12 rounded-3xl shadow-xl border-t-4 border-green-500 mb-12 relative overflow-hidden group">
-            <Target className="absolute top-1/2 left-1/2 w-48 h-48 text-green-500/10 -translate-x-1/2 -translate-y-1/2 transform group-hover:scale-110 transition-transform duration-700" />
-            <div className="relative z-10">
-              <h3 className="text-3xl font-extrabold text-green-600 mb-4 flex items-center gap-3">
-                <Target className="w-8 h-8 text-green-600 fill-green-600/10" />
-                Mission Statement
-              </h3>
-              <p className="text-xl leading-relaxed">
-                Our mission is to cut food waste and help end hunger — because in India more than 194 million people are undernourished, over 20 crore people go to sleep empty-stomach every night, and every day more than 7,000 lives are lost due to hunger.
-                We aim to connect Restorents, Hotels, households with surplus food to needy people nearby — so no meal is wasted, and no one sleeps hungry.
-              </p>
-            </div>
+          {/* Mission Statement - Flat Style */}
+          <div className="mb-12">
+            <h3 className="text-3xl font-extrabold text-green-600 mb-4 flex items-center gap-3">
+              <Target className="w-8 h-8 text-green-600 fill-green-600/10" />
+              Mission Statement
+            </h3>
+            <p className="text-xl leading-relaxed">
+              Our mission is to cut food waste and help end hunger — because in India more than 194 million people are undernourished, over 20 crore people go to sleep empty-stomach every night, and every day more than 7,000 lives are lost due to hunger.
+              We aim to connect Restorents, Hotels, households with surplus food to needy people nearby — so no meal is wasted, and no one sleeps hungry.
+            </p>
           </div>
 
           {/* Core Values Grid */}
