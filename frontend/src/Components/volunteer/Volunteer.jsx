@@ -95,22 +95,12 @@ const Volunteer = () => {
                     <p className="text-xl md:text-2xl text-green-100 mb-8 max-w-2xl mx-auto">
                         Join our network of dedicated volunteers and help bridge the gap between surplus food and those in need.
                     </p>
-                    {showButtons && (
-                        <button
-                            onClick={handleBecomeVolunteer}
-                            className="bg-white text-green-600 px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-green-50 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
-                        >
-                            Become a Volunteer <ArrowRight className="w-5 h-5" />
-                        </button>
-                    )}
-                    {isRegistered && (
-                        <div className="bg-white/20 backdrop-blur-sm px-6 py-4 rounded-xl inline-block">
-                            <p className="text-lg font-semibold flex items-center gap-2">
-                                <CheckCircle className="w-6 h-6" />
-                                You're already registered!
-                            </p>
-                        </div>
-                    )}
+                    <button
+                        onClick={handleBecomeVolunteer}
+                        className="bg-white text-green-600 px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-green-50 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
+                    >
+                        Become a Volunteer <ArrowRight className="w-5 h-5" />
+                    </button>
                 </div>
             </div>
 
@@ -146,14 +136,12 @@ const Volunteer = () => {
                     <p className="text-gray-600 mb-8 max-w-xl mx-auto">
                         Your time and effort can save lives. Sign up today and start your journey as a Food & Hunger volunteer.
                     </p>
-                    {showButtons && (
-                        <button
-                            onClick={handleBecomeVolunteer}
-                            className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition-all"
-                        >
-                            Join Us Now
-                        </button>
-                    )}
+                    <button
+                        onClick={handleBecomeVolunteer}
+                        className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition-all"
+                    >
+                        Join Us Now
+                    </button>
                 </div>
             </div>
 

@@ -1,88 +1,143 @@
-# Food and hunger (frontend)
+# Food and Hunger - Frontend
 
-## How to run the code
+A modern web application built to connect donors with those in need, facilitating food donation and distribution. The platform serves three main roles: **Donors**, **Recipients**, and **Volunteers**.
 
-1. Do git clone
+## Features
 
-```
-git@github.com:Bugsfounder/foodAndHunger.git
-```
+- **Authentication**: Secure Login and Registration for all user roles.
+- **Donor Dashboard**: Manage food donations and track their status.
+- **Recipient Dashboard**: Browse available donations and request food.
+- **Volunteer Dashboard**: View delivery requests and coordinate food pickup/drop-off.
+- **Interactive Maps**: Real-time location services using Leaflet for tracking donations and requests.
 
-2. change directory
+## Tech Stack
 
-```
-cd foodAndHunger/frontend
-```
+- **Framework**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Routing**: [React Router 7](https://reactrouter.com/)
+- **Maps**: [Leaflet](https://leafletjs.com/) & [React Leaflet](https://react-leaflet.js.org/)
+- **HTTP Client**: [Axios](https://axios-http.com/)
+- **Notifications**: [React Hot Toast](https://react-hot-toast.com/)
+- **Icons**: [Lucide React](https://lucide.dev/) & [Heroicons](https://heroicons.com/)
 
-3. Install dependencies
+## Prerequisites
 
-```
-npm install
-```
+- Node.js (Latest LTS recommended)
+- npm or pnpm
 
-4. Run
+## Installation
 
-```
-npm run dev
-```
-
-## Debugger
-
-if got error like this, follow steps bellow:
-
-```
-failed to load config from /home/bugsfounder/workspace/foodandhunger/frontend/vite.config.js
-error when starting dev server:
-Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@tailwindcss/vite' imported from /home/bugsfounder/workspace/foodandhunger/frontend/node_modules/.vite-temp/vite.config.js.timestamp-1761401879564-05bdd65d5b958.mjs
-    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
-    at packageResolve (node:internal/modules/esm/resolve:767:81)
-    at moduleResolve (node:internal/modules/esm/resolve:853:18)
-    at defaultResolve (node:internal/modules/esm/resolve:983:11)
-    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
-    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
-    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
-    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
-```
-
-This error means Vite can’t find the **`@tailwindcss/vite`** package that your `vite.config.js` is trying to import.
-
-### Fix Steps:
-
-1. **Install missing package**
+1. **Clone the repository**
 
    ```bash
-   npm install @tailwindcss/vite -D
+   git clone git@github.com:Bugsfounder/foodAndHunger.git
    ```
 
-   or with yarn:
+2. **Navigate to the frontend directory**
 
    ```bash
-   yarn add -D @tailwindcss/vite
+   cd foodAndHunger/frontend
    ```
 
-2. **If still fails**, remove temp + rebuild:
+3. **Install dependencies**
 
    ```bash
-   rm -rf node_modules .vite-temp package-lock.json
    npm install
-   npm run dev
+   # or
+   pnpm install
    ```
 
-3. **Check your `vite.config.js`**
-   It should look like:
+## Configuration
 
-   ```js
-   import { defineConfig } from "vite";
-   import react from "@vitejs/plugin-react";
-   import tailwindcss from "@tailwindcss/vite";
+### API URL
 
-   export default defineConfig({
-     plugins: [react(), tailwindcss()],
-   });
-   ```
+The backend API URL is currently configured in `src/App.jsx`.
 
-### Why it happened:
+```javascript
+const publicAxiosInstance = axios.create({
+  baseURL: 'http://localhost:8080/api/', // Update this if your backend runs on a different port/host
+  withCredentials: false,
+});
+```
 
-You likely upgraded Tailwind or Vite recently — Tailwind v4 uses a new `@tailwindcss/vite` plugin, which must be installed manually.
+## Available Scripts
 
-After installing it, restart your dev server.
+In the project directory, you can run:
+
+### `npm run dev`
+
+Runs the app in the development mode.\
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
+
+### `npm run build`
+
+Builds the app for production to the `dist` folder.
+
+### `npm run preview`
+
+Locally preview the production build.
+
+### `npm run lint`
+
+Runs ESLint to check for code quality issues.
+
+## Troubleshooting
+
+### Tailwind CSS / Vite Issues
+
+If you encounter an error like:
+
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@tailwindcss/vite'
+```
+
+This usually happens because Tailwind CSS v4 uses a specific Vite plugin that might be missing or not linked correctly.
+
+**Fix Steps:**
+
+1.  **Install the missing package:**
+
+    ```bash
+    npm install @tailwindcss/vite -D
+    ```
+
+2.  **Clean and Reinstall (if issue persists):**
+
+    ```bash
+    rm -rf node_modules .vite-temp package-lock.json
+    npm install
+    npm run dev
+    ```
+
+3.  **Verify `vite.config.js`:**
+
+    Ensure your configuration includes the Tailwind plugin:
+
+    ```javascript
+    import { defineConfig } from "vite";
+    import react from "@vitejs/plugin-react";
+    import tailwindcss from "@tailwindcss/vite";
+
+    export default defineConfig({
+      plugins: [react(), tailwindcss()],
+    });
+    ```
+
+## Project Structure
+
+The project is organized as follows:
+
+- **`src/Components`**: Reusable UI components.
+- **`src/pages`**: Route components (Auth, Donor, Recipient, Volunteer).
+- **`src/assets`**: Static assets like images and icons.
+- **`src/Components/utils`**: Utility components and helper functions.
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](../CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+
+## License
+
+This project is licensed under the terms of the [LICENSE](../LICENSE) file.
+
