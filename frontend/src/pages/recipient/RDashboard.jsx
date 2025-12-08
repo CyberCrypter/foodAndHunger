@@ -3,15 +3,23 @@ import { useOutletContext } from 'react-router-dom';
 import RequestList from '../../Components/recipient/RequestList';
 import DonationFeed from '../../Components/recipient/DonationFeed';
 import RecipientProfile from '../../Components/recipient/RecipientProfile';
-import { List, User, Heart, AlertCircle } from 'lucide-react';
+import RecipientOrderDetails from '../../Components/recipient/RecipientOrderDetails';
+import { List, User, Heart, AlertCircle, Package } from 'lucide-react';
 
 const RDashboard = () => {
   const { publicAxiosInstance } = useOutletContext();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('recipient_active_tab') || 'profile';
+  });
   const [recipientId, setRecipientId] = useState(null);
 
   const [recipientProfile, setRecipientProfile] = useState(null);
   const [isDocumentUploaded, setIsDocumentUploaded] = useState(false);
+
+  // Save active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('recipient_active_tab', activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (recipientProfile && recipientProfile.status !== 'verified' && activeTab === 'requests') {
@@ -137,6 +145,19 @@ const RDashboard = () => {
             Donations Feed
           </button>
           <button
+            onClick={() => isDocumentUploaded && setActiveTab('orders')}
+            disabled={!isDocumentUploaded}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${activeTab === 'orders'
+              ? 'bg-green-100 text-green-700 shadow-sm'
+              : isDocumentUploaded
+                ? 'text-gray-600 hover:bg-gray-50'
+                : 'text-gray-400 cursor-not-allowed opacity-60'
+              }`}
+          >
+            <Package className="w-5 h-5" />
+            Order Details
+          </button>
+          <button
             onClick={() => setActiveTab('profile')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${activeTab === 'profile'
               ? 'bg-green-100 text-green-700 shadow-sm'
@@ -152,6 +173,7 @@ const RDashboard = () => {
         <div className="bg-white rounded-2xl shadow-sm p-6 min-h-[500px]">
           {activeTab === 'requests' && <RequestList recipientId={recipientId} axios={publicAxiosInstance} recipientProfile={recipientProfile} />}
           {activeTab === 'donations' && <DonationFeed axios={publicAxiosInstance} />}
+          {activeTab === 'orders' && <RecipientOrderDetails axios={publicAxiosInstance} recipientId={recipientId} />}
           {activeTab === 'profile' && <RecipientProfile recipientId={recipientId} axios={publicAxiosInstance} onUploadSuccess={handleDocumentUploadSuccess} />}
         </div>
       </div>

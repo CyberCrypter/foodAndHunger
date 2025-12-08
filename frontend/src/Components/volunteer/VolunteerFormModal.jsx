@@ -4,9 +4,13 @@ import toast from 'react-hot-toast';
 
 const VolunteerFormModal = ({ isOpen, onClose, axiosInstance }) => {
     const [loading, setLoading] = useState(false);
+    
+    // Get user email from localStorage
+    const userEmail = localStorage.getItem('email') || '';
+    
     const [formData, setFormData] = useState({
         name: '',
-        email: '',
+        email: userEmail,
         phone: '',
         address: '',
         location: '',
@@ -86,7 +90,7 @@ const VolunteerFormModal = ({ isOpen, onClose, axiosInstance }) => {
                                         required
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none"
+                                        className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
                                         placeholder="John Doe"
                                     />
                                 </div>
@@ -97,8 +101,8 @@ const VolunteerFormModal = ({ isOpen, onClose, axiosInstance }) => {
                                         name="email"
                                         required
                                         value={formData.email}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none"
+                                        readOnly
+                                        className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-gray-50 text-gray-600 cursor-not-allowed outline-none"
                                         placeholder="john@example.com"
                                     />
                                 </div>

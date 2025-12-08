@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, AlertCircle, Navigation, Heart, Eye, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, AlertCircle, Navigation, Heart, Eye, X, Ban, Gift, MessageSquare } from 'lucide-react';
 import DonationForm from './DonationForm';
 
 import toast from 'react-hot-toast';
@@ -9,8 +9,9 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingDonation, setEditingDonation] = useState(null);
-    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, completed: 0 });
+    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0, requested: 0, donated: 0, completed: 0 });
     const [viewDetailsModal, setViewDetailsModal] = useState(null);
+    const [activeFilter, setActiveFilter] = useState('all');
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -31,7 +32,10 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
     const fetchDonations = async () => {
         try {
             const res = await axios.get(`/donation/donor/${donorId}`);
-            const donationData = res.data;
+            const standardStatuses = ['pending', 'approved', 'rejected', 'requested', 'readytodonate', 'completed'];
+            const donationData = res.data.filter(d => 
+                !d.status || standardStatuses.includes(d.status.toLowerCase())
+            );
             setDonations(donationData);
 
             // Calculate statistics
@@ -39,6 +43,9 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
                 total: donationData.length,
                 pending: donationData.filter(d => d.status === 'pending' || !d.status).length,
                 approved: donationData.filter(d => d.status === 'approved').length,
+                rejected: donationData.filter(d => d.status === 'rejected').length,
+                requested: donationData.filter(d => d.status === 'requested').length,
+                donated: donationData.filter(d => d.status === 'donated').length,
                 completed: donationData.filter(d => d.status === 'completed').length
             };
             setStats(calculatedStats);
@@ -104,50 +111,114 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
     return (
         <div>
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-blue-600 font-medium mb-1">Total Donations</p>
-                            <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-8">
+                <div 
+                    onClick={() => setActiveFilter('all')}
+                    className={`bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'all' ? 'border-blue-500 shadow-lg ring-2 ring-blue-200' : 'border-gray-200 hover:border-blue-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-blue-50 rounded-lg">
+                            <Package className="w-7 h-7 text-blue-600" />
                         </div>
-                        <Package className="w-10 h-10 text-blue-500" />
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Total</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-yellow-600 font-medium mb-1">Pending</p>
-                            <p className="text-2xl font-bold text-yellow-900">{stats.pending}</p>
+                <div 
+                    onClick={() => setActiveFilter('pending')}
+                    className={`bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'pending' ? 'border-yellow-500 shadow-lg ring-2 ring-yellow-200' : 'border-gray-200 hover:border-yellow-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-yellow-50 rounded-lg">
+                            <Clock className="w-7 h-7 text-yellow-600" />
                         </div>
-                        <Clock className="w-10 h-10 text-yellow-500" />
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Pending</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-green-600 font-medium mb-1">Approved</p>
-                            <p className="text-2xl font-bold text-green-900">{stats.approved}</p>
+                <div 
+                    onClick={() => setActiveFilter('approved')}
+                    className={`bg-gradient-to-br from-green-100 to-green-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'approved' ? 'border-green-500 shadow-lg ring-2 ring-green-200' : 'border-gray-200 hover:border-green-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-green-50 rounded-lg">
+                            <CheckCircle className="w-7 h-7 text-green-600" />
                         </div>
-                        <CheckCircle className="w-10 h-10 text-green-500" />
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Approved</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-purple-600 font-medium mb-1">Completed</p>
-                            <p className="text-2xl font-bold text-purple-900">{stats.completed}</p>
+                <div 
+                    onClick={() => setActiveFilter('rejected')}
+                    className={`bg-gradient-to-br from-red-100 to-red-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'rejected' ? 'border-red-500 shadow-lg ring-2 ring-red-200' : 'border-gray-200 hover:border-red-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-red-50 rounded-lg">
+                            <Ban className="w-7 h-7 text-red-600" />
                         </div>
-                        <CheckCircle className="w-10 h-10 text-purple-500" />
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Rejected</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.rejected}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div 
+                    onClick={() => setActiveFilter('requested')}
+                    className={`bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'requested' ? 'border-indigo-500 shadow-lg ring-2 ring-indigo-200' : 'border-gray-200 hover:border-indigo-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-indigo-50 rounded-lg">
+                            <MessageSquare className="w-7 h-7 text-indigo-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Requested</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.requested}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div 
+                    onClick={() => setActiveFilter('completed')}
+                    className={`bg-gradient-to-br from-purple-100 to-purple-50 rounded-xl p-4 border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                        activeFilter === 'completed' ? 'border-purple-500 shadow-lg ring-2 ring-purple-200' : 'border-gray-200 hover:border-purple-300'
+                    }`}
+                >
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        <div className="p-3 bg-purple-50 rounded-lg">
+                            <CheckCircle className="w-7 h-7 text-purple-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-600 font-medium mb-1">Completed</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">My Donations</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                    My Donations {activeFilter !== 'all' && `(${activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)})`}
+                </h2>
                 <button
                     onClick={handleAddNew}
                     className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -157,9 +228,18 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
                 </button>
             </div>
 
-            {donations.filter(d => d.status !== 'completed').length === 0 ? (
+            {donations.filter(d => {
+                if (activeFilter === 'all') return true;
+                if (activeFilter === 'pending') return d.status === 'pending' || !d.status;
+                return d.status === activeFilter;
+            }).length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                    <p className="text-gray-500 mb-4">You haven't made any active donations yet.</p>
+                    <p className="text-gray-500 mb-4">
+                        {activeFilter === 'all' 
+                            ? "You haven't made any donations yet."
+                            : `No ${activeFilter} donations found.`
+                        }
+                    </p>
                     <button
                         onClick={handleAddNew}
                         className="text-green-600 font-medium hover:underline"
@@ -169,7 +249,15 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {donations.filter(d => d.status !== 'completed').map((donation) => (
+                    {donations.filter(d => {
+                        if (activeFilter === 'all') return true;
+                        if (activeFilter === 'pending') return d.status === 'pending' || !d.status;
+                        return d.status === activeFilter;
+                    }).sort((a, b) => {
+                        const dateA = new Date(a.updatedAt || a.createdAt);
+                        const dateB = new Date(b.updatedAt || b.createdAt);
+                        return dateB - dateA;
+                    }).map((donation) => (
                         <div key={donation.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-green-100 group">
                             <div className="relative h-48 overflow-hidden">
                                 <img
@@ -236,13 +324,38 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
                                                 <Navigation className="w-5 h-5" />
                                             </button>
                                         </>
+                                    ) : donation.status === 'requested' || donation.status === 'completed' ? (
+                                        <>
+                                            <button
+                                                onClick={() => setViewDetailsModal(donation)}
+                                                disabled={donation.status === 'completed'}
+                                                className={`flex-1 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 ${
+                                                    donation.status === 'completed'
+                                                        ? 'bg-gray-100 text-gray-600 cursor-not-allowed'
+                                                        : 'bg-green-50 text-green-700 hover:bg-green-100 transition-colors'
+                                                }`}
+                                            >
+                                                {donation.status === 'completed' ? (
+                                                    <><CheckCircle className="w-4 h-4" /> Completed</>
+                                                ) : (
+                                                    <><Eye className="w-4 h-4" /> View Details</>
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={() => openLiveLocation(donation.latitude, donation.longitude, donation.address || donation.location)}
+                                                className="p-2.5 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors border border-green-200"
+                                                title="Track Location"
+                                            >
+                                                <Navigation className="w-5 h-5" />
+                                            </button>
+                                        </>
                                     ) : (
                                         <>
                                             <button
                                                 onClick={() => handleEdit(donation)}
-                                                disabled={donation.status === 'out_for_delivery' || donation.status === 'completed'}
+                                                disabled={donation.status === 'out_for_delivery'}
                                                 className={`flex-1 py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                                                    donation.status === 'out_for_delivery' || donation.status === 'completed'
+                                                    donation.status === 'out_for_delivery'
                                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                         : 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-600/20'
                                                 }`}
@@ -252,9 +365,9 @@ const DonationList = ({ donorId, axios, donorProfile }) => {
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(donation.id)}
-                                                disabled={donation.status === 'out_for_delivery' || donation.status === 'completed'}
+                                                disabled={donation.status === 'out_for_delivery'}
                                                 className={`flex-1 py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                                                    donation.status === 'out_for_delivery' || donation.status === 'completed'
+                                                    donation.status === 'out_for_delivery'
                                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                         : 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20'
                                                 }`}

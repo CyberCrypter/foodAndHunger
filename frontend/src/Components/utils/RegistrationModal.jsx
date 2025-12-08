@@ -69,6 +69,10 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
             setLoading(false);
             setRegisteredId(null);
             setRegisteredId(null);
+            
+            // Get user email from localStorage
+            const userEmail = localStorage.getItem('email') || '';
+            
             setFormData({
                 name: '',
                 age: '',
@@ -77,7 +81,7 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                 panNumber: '',
                 aadhaarNumber: '',
                 phone: '',
-                email: '',
+                email: userEmail,
                 location: '',
                 latitude: null,
                 longitude: null,
@@ -102,6 +106,8 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
+
+    const handleChange = handleInputChange; // Alias for consistency
 
     const handleFileChange = (e) => {
         const { name, files: selectedFiles } = e.target;
@@ -468,8 +474,8 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                                         name="name"
                                         required
                                         value={formData.name}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                                         placeholder="John Doe"
                                     />
                                 </div>
@@ -520,8 +526,8 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                                         name="email"
                                         required
                                         value={formData.email}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                        readOnly
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-600 cursor-not-allowed outline-none transition-all"
                                         placeholder="john@example.com"
                                     />
                                 </div>
