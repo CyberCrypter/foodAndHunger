@@ -149,7 +149,7 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                 setStep(2);
             } else {
                 // Create new request
-                const response = await axios.post('/request/add', { ...formData, recipientId });
+                const response = await axios.post('/request/add', { ...formData, recipientId, status: 'pending' });
                 // Expecting JSON response with id
                 if (response.data && response.data.id) {
                     setCreatedRequestId(response.data.id);
@@ -199,9 +199,9 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="flex justify-between items-center p-6 border-b">
-                    <h2 className="text-xl font-bold text-gray-900">
+            <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] shadow-2xl overflow-y-auto animate-in fade-in zoom-in duration-200">
+                <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
+                    <h2 className="text-lg font-bold text-gray-900">
                         {request ? 'Edit Request' : 'Add New Request'} - Step {step} of 2
                     </h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -210,7 +210,7 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                 </div>
 
                 {step === 1 ? (
-                    <form onSubmit={handleStep1Submit} className="p-6 space-y-4">
+                    <form onSubmit={handleStep1Submit} className="p-4 space-y-2">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                             <input
@@ -219,7 +219,7 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                                 value={formData.title}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
+                                className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
                                 placeholder="e.g., Need Food for 50 People"
                             />
                         </div>
@@ -230,7 +230,7 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                                 name="type"
                                 value={formData.type}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
+                                className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
                             >
                                 <option value="Veg">Veg</option>
                                 <option value="Non-Veg">Non-Veg</option>
@@ -242,16 +242,24 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                             <textarea
                                 name="description"
                                 value={formData.description}
-                                onChange={handleChange}
-                                rows="3"
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
+                                onChange={(e) => {
+                                    const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0);
+                                    if (words.length <= 200 || e.target.value.length < formData.description.length) {
+                                        handleChange(e);
+                                    }
+                                }}
+                                rows="2"
+                                className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
                                 placeholder="Describe what is needed..."
                             />
+                            <div className="text-xs text-gray-500 mt-1 text-right">
+                                {formData.description.trim().split(/\s+/).filter(word => word.length > 0).length}/200 words
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-2">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Address (Landmark)</label>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
@@ -259,8 +267,8 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                                         name="location"
                                         value={formData.location}
                                         onChange={handleChange}
-                                        className="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
-                                        placeholder="City"
+                                        className="w-full pl-9 pr-3 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
+                                        placeholder="Landmark"
                                     />
                                 </div>
                             </div>
@@ -272,27 +280,27 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                                         name="address"
                                         value={formData.address}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all"
+                                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
                                         placeholder="Street address"
                                     />
                                     <button
                                         type="button"
                                         onClick={handleGetLocation}
-                                        className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors"
+                                        className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors shrink-0"
                                         title="Use Current Location"
                                     >
-                                        <MapPin className="w-5 h-5" />
+                                        <MapPin className="w-4 h-4" />
                                     </button>
                                 </div>
                                 {formData.latitude && (
                                     <p className="text-xs text-green-600 mt-1">
-                                        Location detected: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
+                                        Location: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        <div className="h-64 w-full rounded-xl overflow-hidden border z-0">
+                        <div className="h-40 w-full rounded-xl overflow-hidden border">
                             <MapContainer
                                 center={[formData.latitude || 20.5937, formData.longitude || 78.9629]}
                                 zoom={formData.latitude ? 13 : 5}
@@ -307,10 +315,10 @@ const RequestForm = ({ isOpen, onClose, onSuccess, request, recipientId, axios }
                                     setPosition={(latlng) => handleLocationSelect(latlng.lat, latlng.lng)}
                                 />
                             </MapContainer>
-                            <p className="text-xs text-gray-500 mt-1">Click on the map to set location</p>
                         </div>
+                        <p className="text-xs text-gray-500">Click on the map to set location</p>
 
-                        <div className="pt-4 flex gap-3">
+                        <div className="pt-2 flex gap-2">
                             <button
                                 type="button"
                                 onClick={onClose}

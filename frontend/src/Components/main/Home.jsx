@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { MapPin, Calendar, CheckCircle, AlertCircle, ArrowRight, Heart, Utensils, Clock, Navigation, ChevronLeft, ChevronRight, Plus, Minus, Package, Eye, X, User } from "lucide-react";
 import AuthModal from "../utils/AuthModal";
 import toast from 'react-hot-toast';
@@ -9,6 +9,7 @@ import RequestFeed from "../donor/RequestFeed";
 
 const Home = () => {
     const { publicAxiosInstance } = useOutletContext();
+    const navigate = useNavigate();
     const [donations, setDonations] = useState([]);
     const [requests, setRequests] = useState([]);
     const [donors, setDonors] = useState({}); // Map of donorId -> donorData
@@ -292,98 +293,81 @@ const Home = () => {
 
                 {/* Content Section */}
                 <section>
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                                {isVolunteer ? (
-                                    <>
-                                        <Navigation className="text-blue-600" />
-                                        Available for Pickups
-                                    </>
-                                ) : activeTab === 'donations' ? (
-                                    <>
-                                        <Heart className="text-green-600 fill-green-600" />
-                                        Available Donations
-                                    </>
-                                ) : (
-                                    <>
-                                        <Utensils className="text-orange-500 fill-orange-500" />
-                                        Current Food Needs
-                                    </>
-                                )}
-                            </h2>
-                            <p className="text-gray-600 mt-2">
-                                {isVolunteer
-                                    ? "Approved donations and requests ready for pickup and delivery"
-                                    : activeTab === 'donations'
-                                        ? "Fresh food available for pickup right now"
-                                        : "Urgent requests from communities in need"}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {isVolunteer ? (
-                            // Volunteer view - show both donations and requests (matching VDashboard style)
-                            currentItemsSlice.map((item) => {
-                                const isDonation = item.donorId !== undefined;
-                                return (
-                                    <div key={`${isDonation ? 'donation' : 'request'}-${item.id}`} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                                        <div className="h-48 bg-gray-200 relative">
-                                            {item.photo ? (
-                                                <img
-                                                    src={`http://localhost:8080${item.photo}`}
-                                                    alt={item.title}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'; }}
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                    <Package className="w-12 h-12" />
-                                                </div>
-                                            )}
-                                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm">
-                                                {isDonation ? 'donation' : 'request'}
-                                            </div>
-                                        </div>
-
-                                        <div className="p-6 flex-1 flex flex-col">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{item.title}</h3>
-                                                <span className={`px-2 py-1 rounded text-xs font-medium uppercase ${item.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                    item.status === 'out_for_delivery' ? 'bg-blue-100 text-blue-800' :
-                                                        item.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                                                            'bg-yellow-100 text-yellow-800'
-                                                    }`}>
-                                                    {item.status}
-                                                </span>
-                                            </div>
-
-                                            <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">{item.description}</p>
-
-                                            <div className="space-y-2 text-sm text-gray-500 mb-6">
-                                                <div className="flex items-start gap-2">
-                                                    <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                                                    <span className="line-clamp-2">{item.address || item.location || "Address Available"}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Clock className="w-4 h-4 shrink-0" />
-                                                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                                                </div>
-                                            </div>
-
-                                            <button
-                                                onClick={() => setViewDetailsModal(item)}
-                                                className="w-full py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-                                            >
-                                                <Eye className="w-5 h-5" />
-                                                View Details
-                                            </button>
-                                        </div>
+                    {isVolunteer ? (
+                        // Beautiful message for volunteers
+                        <div className="flex flex-col items-center justify-center py-20 px-4">
+                            <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-3xl p-12 max-w-3xl text-center shadow-xl border border-green-100">
+                                <div className="mb-8">
+                                    <div className="relative inline-block">
+                                        <Package className="w-32 h-32 mx-auto text-green-500 animate-bounce" />
                                     </div>
-                                );
-                            })
-                        ) : activeTab === 'donations' ? (
+                                </div>
+                                <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                                    Welcome, Volunteer! 🌟
+                                </h2>
+                                <p className="text-gray-700 text-xl mb-6 leading-relaxed">
+                                    Thank you for being a hero in our community! Your dedication to fighting hunger makes a real difference.
+                                </p>
+                                <div className="bg-white/90 backdrop-blur rounded-2xl p-8 mb-8 shadow-md">
+                                    <h3 className="text-2xl font-bold text-green-700 mb-4">Ready to Make a Difference?</h3>
+                                    <p className="text-gray-600 text-lg mb-6">
+                                        Head to your volunteer dashboard to view available pickups and manage your active deliveries.
+                                    </p>
+                                    <button
+                                        onClick={() => navigate('/volunteers/dashboard')}
+                                        className="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-green-700 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+                                    >
+                                        <Navigation className="w-6 h-6" />
+                                        Go to Dashboard
+                                        <ArrowRight className="w-6 h-6" />
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                                    <div className="bg-green-100 rounded-xl p-4">
+                                        <div className="text-3xl mb-2">📦</div>
+                                        <h4 className="font-bold text-gray-800 mb-1">View Pickups</h4>
+                                        <p className="text-sm text-gray-600">See all available items ready for delivery</p>
+                                    </div>
+                                    <div className="bg-blue-100 rounded-xl p-4">
+                                        <div className="text-3xl mb-2">🚚</div>
+                                        <h4 className="font-bold text-gray-800 mb-1">Active Deliveries</h4>
+                                        <p className="text-sm text-gray-600">Track your ongoing delivery tasks</p>
+                                    </div>
+                                    <div className="bg-purple-100 rounded-xl p-4">
+                                        <div className="text-3xl mb-2">✨</div>
+                                        <h4 className="font-bold text-gray-800 mb-1">Make Impact</h4>
+                                        <p className="text-sm text-gray-600">Every delivery feeds someone in need</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : currentItemsSlice.length > 0 ? (
+                        <>
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
+                                        {activeTab === 'donations' ? (
+                                            <>
+                                                <Heart className="text-green-600 fill-green-600" />
+                                                Available Donations
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Utensils className="text-orange-500 fill-orange-500" />
+                                                Current Food Needs
+                                            </>
+                                        )}
+                                    </h2>
+                                    <p className="text-gray-600 mt-2">
+                                        {activeTab === 'donations'
+                                            ? "Fresh food available for pickup right now"
+                                            : "Urgent requests from communities in need"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {activeTab === 'donations' ? (
                             currentItemsSlice.map((donation) => (
                                 <div key={donation.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-green-100 group">
                                     <div className="relative h-48 overflow-hidden">
@@ -557,9 +541,49 @@ const Home = () => {
                             ))
                         )}
                     </div>
+                    </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-20 px-4">
+                            <div className="bg-gradient-to-br from-green-50 to-orange-50 rounded-3xl p-12 max-w-2xl text-center shadow-lg border border-green-100">
+                                {activeTab === 'donations' ? (
+                                    <>
+                                        <div className="mb-6">
+                                            <Heart className="w-20 h-20 mx-auto text-green-500 animate-pulse" />
+                                        </div>
+                                        <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                                            No Donations Available Right Now
+                                        </h3>
+                                        <p className="text-gray-600 text-lg mb-6">
+                                            We're currently waiting for generous donors to share their surplus food. Every small contribution makes a big difference!
+                                        </p>
+                                        <div className="bg-white/80 backdrop-blur rounded-2xl p-6">
+                                            <p className="text-green-700 font-medium mb-2">💚 Want to make an impact?</p>
+                                            <p className="text-gray-600">Join our community of donors and help feed those in need</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="mb-6">
+                                            <Utensils className="w-20 h-20 mx-auto text-orange-500 animate-pulse" />
+                                        </div>
+                                        <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                                            Great News! No Pending Requests
+                                        </h3>
+                                        <p className="text-gray-600 text-lg mb-6">
+                                            All current food needs have been addressed. Our community is working together to ensure no one goes hungry!
+                                        </p>
+                                        <div className="bg-white/80 backdrop-blur rounded-2xl p-6">
+                                            <p className="text-orange-600 font-medium mb-2">🤝 Together We're Stronger</p>
+                                            <p className="text-gray-600">Check back soon or join our mission to fight hunger</p>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Pagination */}
-                    {totalPages > 1 && (
+                    {currentItemsSlice.length > 0 && totalPages > 1 && (
                         <div className="flex justify-center items-center gap-4 mt-12">
                             <button
                                 onClick={() => paginate(currentPage - 1)}

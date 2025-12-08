@@ -3,15 +3,23 @@ import { useOutletContext } from 'react-router-dom';
 import DonationList from '../../Components/donor/DonationList';
 import RequestFeed from '../../Components/donor/RequestFeed';
 import DonorProfile from '../../Components/donor/DonorProfile';
-import { Heart, List, User, AlertCircle } from 'lucide-react';
+import OrderDetails from '../../Components/donor/OrderDetails';
+import { Heart, List, User, AlertCircle, Package } from 'lucide-react';
 
 const DDashboard = () => {
   const { publicAxiosInstance } = useOutletContext();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('donor_active_tab') || 'profile';
+  });
   const [donorId, setDonorId] = useState(null);
 
   const [donorProfile, setDonorProfile] = useState(null);
   const [isDocumentUploaded, setIsDocumentUploaded] = useState(false);
+
+  // Save active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('donor_active_tab', activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (donorProfile && donorProfile.status !== 'verified' && activeTab === 'donations') {
@@ -137,6 +145,19 @@ const DDashboard = () => {
             Requests Feed
           </button>
           <button
+            onClick={() => isDocumentUploaded && setActiveTab('orders')}
+            disabled={!isDocumentUploaded}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${activeTab === 'orders'
+              ? 'bg-green-100 text-green-700 shadow-sm'
+              : isDocumentUploaded
+                ? 'text-gray-600 hover:bg-gray-50'
+                : 'text-gray-400 cursor-not-allowed opacity-60'
+              }`}
+          >
+            <Package className="w-5 h-5" />
+            Order Details
+          </button>
+          <button
             onClick={() => setActiveTab('profile')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${activeTab === 'profile'
               ? 'bg-green-100 text-green-700 shadow-sm'
@@ -152,6 +173,7 @@ const DDashboard = () => {
         <div className="bg-white rounded-2xl shadow-sm p-6 min-h-[500px]">
           {activeTab === 'donations' && <DonationList donorId={donorId} axios={publicAxiosInstance} donorProfile={donorProfile} />}
           {activeTab === 'requests' && <RequestFeed axios={publicAxiosInstance} />}
+          {activeTab === 'orders' && <OrderDetails axios={publicAxiosInstance} donorId={donorId} />}
           {activeTab === 'profile' && <DonorProfile donorId={donorId} axios={publicAxiosInstance} onUploadSuccess={handleDocumentUploadSuccess} />}
         </div>
       </div>

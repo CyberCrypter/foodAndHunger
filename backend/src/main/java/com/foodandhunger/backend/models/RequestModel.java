@@ -28,6 +28,8 @@ public class RequestModel {
     private double latitude;
     private double longitude;
     private int recipientId; // who created this request
+    private Integer donorId; // donor who is fulfilling this request
+    private String remarks; // additional notes (e.g., "Ready to donate by donor ID: 5")
 
     @CreationTimestamp
     private LocalDateTime createdAt;

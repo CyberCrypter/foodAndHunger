@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, FileText, CheckCircle, XCircle } from 'lucide-react';
+import { User, Mail, Phone, MapPin, FileText, CheckCircle, XCircle, Clock, Award } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
+const VolunteerProfile = ({ volunteerId, axios, onUploadSuccess }) => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -10,8 +10,8 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
 
     const [files, setFiles] = useState({
         photo: null,
-        certificate: null,
-        signature: null
+        aadhaar: null,
+        pan: null
     });
 
     const [isEditing, setIsEditing] = useState(false);
@@ -20,7 +20,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get(`/donor/${donorId}`);
+                const res = await axios.get(`/volunteer/${volunteerId}`);
                 setProfile(res.data);
                 setFormData(res.data);
             } catch (error) {
@@ -30,10 +30,10 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                 setLoading(false);
             }
         };
-        if (donorId) {
+        if (volunteerId) {
             fetchProfile();
         }
-    }, [donorId, axios]);
+    }, [volunteerId, axios]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,13 +44,13 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
         setSaving(true);
         try {
             // First update profile data
-            await axios.put(`/donor/update/${donorId}`, formData);
+            await axios.put(`/volunteer/update/${volunteerId}`, formData);
             
             // If photo is changed, upload it
             if (editPhoto) {
                 const formDataUpload = new FormData();
                 formDataUpload.append('photo', editPhoto);
-                const photoRes = await axios.post(`/donor/${donorId}/upload`, formDataUpload, {
+                const photoRes = await axios.post(`/volunteer/${volunteerId}/upload`, formDataUpload, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 setProfile(photoRes.data);
@@ -64,11 +64,11 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
             setEditPhoto(null);
             
             // Reload profile to get fresh data including new photo path
-            const res = await axios.get(`/donor/${donorId}`);
+            const res = await axios.get(`/volunteer/${volunteerId}`);
             setProfile(res.data);
             setFormData(res.data);
             
-            // As per requirements: if user refreshed after filling details only, save document_uploaded: false
+            // Save document_uploaded: false when only details are updated
             localStorage.setItem('document_uploaded', 'false');
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -94,20 +94,19 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
         try {
             const formDataUpload = new FormData();
             if (files.photo) formDataUpload.append('photo', files.photo);
-            if (files.certificate) formDataUpload.append('certificate', files.certificate);
-            if (files.signature) formDataUpload.append('signature', files.signature);
+            if (files.aadhaar) formDataUpload.append('aadhaar', files.aadhaar);
+            if (files.pan) formDataUpload.append('pan', files.pan);
 
-            const res = await axios.post(`/donor/${donorId}/upload`, formDataUpload, {
+            const res = await axios.post(`/volunteer/${volunteerId}/upload`, formDataUpload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success("Documents uploaded successfully!");
             setProfile(res.data);
-            setFiles({ photo: null, certificate: null, signature: null });
+            setFiles({ photo: null, aadhaar: null, pan: null });
 
             // Check if all required documents are uploaded
             const updatedProfile = res.data;
-            const isComplete = updatedProfile.photo && updatedProfile.signature &&
-                (!updatedProfile.organizationName || updatedProfile.organizationCertificate);
+            const isComplete = updatedProfile.profilePhotoUrl && updatedProfile.aadhaarCard && updatedProfile.panCard;
 
             if (isComplete) {
                 localStorage.setItem('document_uploaded', 'true');
@@ -128,14 +127,12 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
     if (!profile) return <div className="text-center py-8 text-red-500">Failed to load profile.</div>;
 
     // Check if documents are already uploaded based on profile data
-    // We prioritize profile data over localStorage to ensure accuracy
-    const isDocumentUploaded = profile.photo && profile.signature &&
-        (!profile.organizationName || profile.organizationCertificate);
+    const isDocumentUploaded = profile.profilePhotoUrl && profile.aadhaarCard && profile.panCard;
 
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300">
-                <div className="h-48 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-600 relative overflow-hidden">
+                <div className="h-48 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 relative overflow-hidden">
                     <div className="absolute inset-0 bg-black opacity-10"></div>
                     <div className="absolute inset-0" style={{
                         backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
@@ -166,16 +163,16 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                             alt="Preview"
                                             className="w-full h-full object-cover"
                                         />
-                                    ) : profile.photo ? (
+                                    ) : profile.profilePhotoUrl ? (
                                         <img
-                                            src={`http://localhost:8080${profile.photo}`}
+                                            src={`http://localhost:8080${profile.profilePhotoUrl}`}
                                             alt={profile.name}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=User'; }}
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">
-                                            <User className="w-14 h-14 text-teal-400" />
+                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+                                            <User className="w-14 h-14 text-blue-400" />
                                         </div>
                                     )}
                                     {isEditing && (
@@ -185,22 +182,28 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     )}
                                 </div>
                             </label>
-                            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
-                                {profile.status === 'verified' ? (
+                            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
+                                {profile.status === 'APPROVED' ? (
                                     <CheckCircle className="w-6 h-6 text-white" />
-                                ) : (
+                                ) : profile.status === 'REJECTED' ? (
                                     <XCircle className="w-6 h-6 text-white" />
+                                ) : (
+                                    <Clock className="w-6 h-6 text-white" />
                                 )}
                             </div>
                         </div>
                         <div className="mb-1 flex items-center gap-4">
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                {profile.status || 'Active'}
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                profile.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                                profile.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                'bg-yellow-100 text-yellow-700'
+                            }`}>
+                                {profile.status || 'PENDING'}
                             </span>
                             {!isEditing && (
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="px-3 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-md text-sm font-medium shadow-lg hover:shadow-xl hover:from-emerald-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-200"
+                                    className="px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-md text-sm font-medium shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-indigo-600 transform hover:scale-105 transition-all duration-200"
                                 >
                                     Edit Profile
                                 </button>
@@ -217,7 +220,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     name="name"
                                     value={formData.name || ''}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                                 />
                             </div>
 
@@ -228,7 +231,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     name="email"
                                     value={formData.email || ''}
                                     disabled
-                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none bg-gray-50"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-gray-50"
                                 />
                             </div>
 
@@ -239,7 +242,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     name="phone"
                                     value={formData.phone || ''}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                                 />
                             </div>
 
@@ -250,7 +253,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     name="location"
                                     value={formData.location || ''}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                                 />
                             </div>
 
@@ -261,22 +264,55 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                     name="address"
                                     value={formData.address || ''}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                                 />
                             </div>
 
-                            {formData.organizationName && (
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Organization Name</label>
-                                    <input
-                                        type="text"
-                                        name="organizationName"
-                                        value={formData.organizationName || ''}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                                    />
-                                </div>
-                            )}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
+                                <input
+                                    type="tel"
+                                    name="emergencyContactPhone"
+                                    value={formData.emergencyContactPhone || ''}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Availability</label>
+                                <input
+                                    type="text"
+                                    name="availability"
+                                    value={formData.availability || ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Mon-Fri, 2pm-6pm"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
+                                <input
+                                    type="text"
+                                    name="skills"
+                                    value={formData.skills || ''}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Delivery, Packing"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                />
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Why do you want to volunteer?</label>
+                                <textarea
+                                    name="reason"
+                                    value={formData.reason || ''}
+                                    onChange={handleChange}
+                                    rows="3"
+                                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                                />
+                            </div>
 
                             <div className="md:col-span-2 flex justify-end gap-3 mt-4">
                                 <button
@@ -292,7 +328,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="px-6 py-2 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                                    className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>
@@ -302,7 +338,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900 mb-1">{profile.name}</h2>
-                                <p className="text-gray-500 mb-6">{profile.organizationName}</p>
+                                <p className="text-gray-500 mb-6">Volunteer</p>
 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3 text-gray-600">
@@ -321,47 +357,80 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                         <MapPin className="w-5 h-5 text-gray-400" />
                                         <span>{profile.address}</span>
                                     </div>
+                                    <div className="flex items-center gap-3 text-gray-600">
+                                        <Phone className="w-5 h-5 text-gray-400" />
+                                        <span>Emergency: {profile.emergencyContactPhone || 'Not provided'}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="bg-gray-50 rounded-xl p-6">
-                                <h3 className="font-semibold text-gray-900 mb-4">Verification Documents</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                                        <div className="flex items-center gap-3">
-                                            <FileText className="w-5 h-5 text-blue-500" />
-                                            <span className="text-sm font-medium text-gray-700">Certificate</span>
+                            <div className="space-y-6">
+                                <div className="bg-gray-50 rounded-xl p-6">
+                                    <h3 className="font-semibold text-gray-900 mb-4">Volunteer Details</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Clock className="w-4 h-4 text-blue-500" />
+                                                <span className="text-sm font-medium text-gray-700">Availability</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 ml-6">{profile.availability || 'Not specified'}</p>
                                         </div>
-                                        {profile.organizationCertificate ? (
-                                            <a
-                                                href={`http://localhost:8080${profile.organizationCertificate}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-xs text-blue-600 hover:underline"
-                                            >
-                                                View
-                                            </a>
-                                        ) : (
-                                            <span className="text-xs text-gray-400">Not uploaded</span>
-                                        )}
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Award className="w-4 h-4 text-blue-500" />
+                                                <span className="text-sm font-medium text-gray-700">Skills</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 ml-6">{profile.skills || 'Not specified'}</p>
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <FileText className="w-4 h-4 text-blue-500" />
+                                                <span className="text-sm font-medium text-gray-700">Reason for Volunteering</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 ml-6">{profile.reason || 'Not specified'}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                                        <div className="flex items-center gap-3">
-                                            <FileText className="w-5 h-5 text-blue-500" />
-                                            <span className="text-sm font-medium text-gray-700">Signature</span>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-xl p-6">
+                                    <h3 className="font-semibold text-gray-900 mb-4">Verification Documents</h3>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                                            <div className="flex items-center gap-3">
+                                                <FileText className="w-5 h-5 text-blue-500" />
+                                                <span className="text-sm font-medium text-gray-700">Aadhaar Card</span>
+                                            </div>
+                                            {profile.aadhaarCard ? (
+                                                <a
+                                                    href={`http://localhost:8080${profile.aadhaarCard}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-xs text-blue-600 hover:underline"
+                                                >
+                                                    View
+                                                </a>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">Not uploaded</span>
+                                            )}
                                         </div>
-                                        {profile.signature ? (
-                                            <a
-                                                href={`http://localhost:8080${profile.signature}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-xs text-blue-600 hover:underline"
-                                            >
-                                                View
-                                            </a>
-                                        ) : (
-                                            <span className="text-xs text-gray-400">Not uploaded</span>
-                                        )}
+                                        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                                            <div className="flex items-center gap-3">
+                                                <FileText className="w-5 h-5 text-blue-500" />
+                                                <span className="text-sm font-medium text-gray-700">PAN Card</span>
+                                            </div>
+                                            {profile.panCard ? (
+                                                <a
+                                                    href={`http://localhost:8080${profile.panCard}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-xs text-blue-600 hover:underline"
+                                                >
+                                                    View
+                                                </a>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">Not uploaded</span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -375,14 +444,14 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                 <div className="bg-white rounded-xl border p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Upload Documents</h3>
                     <div className="mb-4 p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm">
-                        Please upload your documents to verify your account. You won't be able to make donations or requests until this is completed.
+                        Please upload your documents to verify your account. You won't be able to access volunteer features until this is completed.
                     </div>
                     <form onSubmit={handleUpload} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Photo Upload */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
-                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition-colors">
+                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-500 transition-colors">
                                     <input
                                         type="file"
                                         name="photo"
@@ -396,63 +465,61 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                                             <User className="w-6 h-6" />
                                         </div>
                                         <span className="text-xs text-gray-600 truncate max-w-full">
-                                            {files.photo ? files.photo.name : "Change Photo"}
+                                            {files.photo ? files.photo.name : "Upload Photo"}
                                         </span>
                                     </label>
                                 </div>
                             </div>
 
-                            {/* Certificate Upload */}
-                            {profile.organizationName && (
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Organization Certificate</label>
-                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition-colors">
-                                        <input
-                                            type="file"
-                                            name="certificate"
-                                            accept=".pdf,image/*"
-                                            onChange={handleFileChange}
-                                            className="hidden"
-                                            id="certificate-upload"
-                                        />
-                                        <label htmlFor="certificate-upload" className="cursor-pointer flex flex-col items-center gap-2">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                                                <FileText className="w-6 h-6" />
-                                            </div>
-                                            <span className="text-xs text-gray-600 truncate max-w-full">
-                                                {files.certificate ? files.certificate.name : "Upload Certificate"}
-                                            </span>
-                                        </label>
-                                    </div>
-                                    {profile.organizationCertificate && (
-                                        <a href={`http://localhost:8080${profile.organizationCertificate}`} target="_blank" rel="noreferrer" className="text-xs text-blue-600 block mt-2 text-center">View Current</a>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Signature Upload */}
+                            {/* Aadhaar Upload */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Signature</label>
-                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-green-500 transition-colors">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Aadhaar Card</label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-500 transition-colors">
                                     <input
                                         type="file"
-                                        name="signature"
-                                        accept="image/*"
+                                        name="aadhaar"
+                                        accept=".pdf,image/*"
                                         onChange={handleFileChange}
                                         className="hidden"
-                                        id="signature-upload"
+                                        id="aadhaar-upload"
                                     />
-                                    <label htmlFor="signature-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                                    <label htmlFor="aadhaar-upload" className="cursor-pointer flex flex-col items-center gap-2">
                                         <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
                                             <FileText className="w-6 h-6" />
                                         </div>
                                         <span className="text-xs text-gray-600 truncate max-w-full">
-                                            {files.signature ? files.signature.name : "Upload Signature"}
+                                            {files.aadhaar ? files.aadhaar.name : "Upload Aadhaar"}
                                         </span>
                                     </label>
                                 </div>
-                                {profile.signature && (
-                                    <a href={`http://localhost:8080${profile.signature}`} target="_blank" rel="noreferrer" className="text-xs text-blue-600 block mt-2 text-center">View Current</a>
+                                {profile.aadhaarCard && (
+                                    <a href={`http://localhost:8080${profile.aadhaarCard}`} target="_blank" rel="noreferrer" className="text-xs text-blue-600 block mt-2 text-center">View Current</a>
+                                )}
+                            </div>
+
+                            {/* PAN Upload */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">PAN Card</label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-500 transition-colors">
+                                    <input
+                                        type="file"
+                                        name="pan"
+                                        accept=".pdf,image/*"
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        id="pan-upload"
+                                    />
+                                    <label htmlFor="pan-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                            <FileText className="w-6 h-6" />
+                                        </div>
+                                        <span className="text-xs text-gray-600 truncate max-w-full">
+                                            {files.pan ? files.pan.name : "Upload PAN"}
+                                        </span>
+                                    </label>
+                                </div>
+                                {profile.panCard && (
+                                    <a href={`http://localhost:8080${profile.panCard}`} target="_blank" rel="noreferrer" className="text-xs text-blue-600 block mt-2 text-center">View Current</a>
                                 )}
                             </div>
                         </div>
@@ -460,7 +527,7 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
                         <div className="flex justify-end">
                             <button
                                 type="submit"
-                                disabled={!files.photo && !files.certificate && !files.signature || saving}
+                                disabled={!files.photo && !files.aadhaar && !files.pan || saving}
                                 className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {saving ? 'Uploading...' : 'Upload Documents'}
@@ -473,4 +540,4 @@ const DonorProfile = ({ donorId, axios, onUploadSuccess }) => {
     );
 };
 
-export default DonorProfile;
+export default VolunteerProfile;

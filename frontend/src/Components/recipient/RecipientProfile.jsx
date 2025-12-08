@@ -16,6 +16,7 @@ const RecipientProfile = ({ recipientId, axios, onUploadSuccess }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
     const [saving, setSaving] = useState(false);
+    const [editPhoto, setEditPhoto] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -61,10 +62,30 @@ const RecipientProfile = ({ recipientId, axios, onUploadSuccess }) => {
         e.preventDefault();
         setSaving(true);
         try {
+            // First update profile data
             const res = await axios.put(`/recipient/update/${recipientId}`, formData);
-            setProfile(res.data);
+            
+            // If photo is changed, upload it
+            if (editPhoto) {
+                const formDataUpload = new FormData();
+                formDataUpload.append('photo', editPhoto);
+                const photoRes = await axios.post(`/recipient/${recipientId}/upload`, formDataUpload, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                setProfile(photoRes.data);
+                setFormData(photoRes.data);
+            } else {
+                setProfile(res.data);
+            }
+            
             setIsEditing(false);
+            setEditPhoto(null);
             toast.success("Profile updated successfully!");
+            
+            // Reload profile to get fresh data including new photo path
+            const freshRes = await axios.get(`/recipient/${recipientId}`);
+            setProfile(freshRes.data);
+            setFormData(freshRes.data);
         } catch (error) {
             console.error("Error updating profile:", error);
             toast.error("Failed to update profile.");
@@ -124,20 +145,47 @@ const RecipientProfile = ({ recipientId, axios, onUploadSuccess }) => {
                 <div className="px-8 pb-8">
                     <div className="relative flex justify-between items-end -mt-16 mb-6">
                         <div className="relative group">
-                            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-white shadow-2xl transform group-hover:scale-105 transition-transform duration-300">
-                                {profile.photo ? (
-                                    <img
-                                        src={`http://localhost:8080${profile.photo}`}
-                                        alt={profile.name}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=User'; }}
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">
-                                        <User className="w-14 h-14 text-teal-400" />
-                                    </div>
-                                )}
-                            </div>
+                            <input
+                                type="file"
+                                id="photoUploadRecipient"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                        setEditPhoto(e.target.files[0]);
+                                    }
+                                }}
+                            />
+                            <label
+                                htmlFor={isEditing ? "photoUploadRecipient" : undefined}
+                                className={`w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-white shadow-2xl transform group-hover:scale-105 transition-transform duration-300 block relative ${isEditing ? 'cursor-pointer' : ''}`}
+                            >
+                                <div className="w-full h-full relative">
+                                    {editPhoto ? (
+                                        <img
+                                            src={URL.createObjectURL(editPhoto)}
+                                            alt="Preview"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : profile.photo ? (
+                                        <img
+                                            src={`http://localhost:8080${profile.photo}`}
+                                            alt={profile.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=User'; }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-cyan-100">
+                                            <User className="w-14 h-14 text-teal-400" />
+                                        </div>
+                                    )}
+                                    {isEditing && (
+                                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-200 flex items-center justify-center">
+                                            <span className="text-white text-xs font-medium z-10 relative">Change Photo</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </label>
                             <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
                                 {profile.status === 'verified' || profile.status === 'approved' ? (
                                     <CheckCircle className="w-6 h-6 text-white" />

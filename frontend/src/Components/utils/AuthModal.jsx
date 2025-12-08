@@ -43,6 +43,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     localStorage.setItem('userId', userData.id);
                     localStorage.setItem('logged_in', 'true');
                     if (userData.username) localStorage.setItem('username', userData.username);
+                    if (userData.email) localStorage.setItem('email', userData.email);
 
                     toast.success("Login successful!");
                     
@@ -83,6 +84,9 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 console.log("Signup response:", response);
 
                 if (response.data) {
+                    // Store email in localStorage for registration forms
+                    localStorage.setItem('email', formData.email.trim());
+                    
                     // Auto login after signup or switch to login
                     setFormData({
                         username: '',
@@ -90,6 +94,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         password: '',
                         confirmPassword: ''
                     });
+                    
                     setIsLogin(true);
                     toast.success("Account created successfully! Please login.");
                 }

@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import banner1 from "../../assets/images/banner1.png";
 import banner2 from "../../assets/images/banner2.png";
 import banner3 from "../../assets/images/banner3.png";
 import banner4 from "../../assets/images/banner4.png";
 import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
 import RegistrationModal from "./RegistrationModal";
+import AuthModal from "./AuthModal";
 
 const HomePageCrousel = () => {
+    const navigate = useNavigate();
     const [index, setIndex] = useState(0);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [registerUserType, setRegisterUserType] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
     
@@ -55,6 +59,19 @@ const HomePageCrousel = () => {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
+
+    const handleRegisterClick = (userType) => {
+        const loggedIn = localStorage.getItem('logged_in') === 'true';
+        
+        if (!loggedIn) {
+            // User not logged in, open auth modal
+            setIsAuthModalOpen(true);
+        } else {
+            // User logged in, open registration modal
+            setRegisterUserType(userType);
+            setIsRegisterModalOpen(true);
+        }
+    };
 
     return (
         <div className="relative w-full h-[100vh] overflow-hidden" >
@@ -106,10 +123,7 @@ const HomePageCrousel = () => {
                     {!isRegistered && (
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center py-8" style={{ animation: 'fade-in-up 0.8s ease-out forwards', animationDelay: '0.6s', opacity: 0 }}>
                             <button 
-                                onClick={() => {
-                                    setRegisterUserType('donor');
-                                    setIsRegisterModalOpen(true);
-                                }}
+                                onClick={() => handleRegisterClick('donor')}
                                 className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group"
                             >
                                 <div className="absolute inset-0 bg-green-600 transition-transform duration-300 group-hover:scale-110"></div>
@@ -121,10 +135,7 @@ const HomePageCrousel = () => {
                                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
                             </button>
                             <button 
-                                onClick={() => {
-                                    setRegisterUserType('recipient');
-                                    setIsRegisterModalOpen(true);
-                                }}
+                                onClick={() => handleRegisterClick('recipient')}
                                 className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group border-2 border-white/30 backdrop-blur-sm"
                             >
                                 <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
@@ -161,6 +172,16 @@ const HomePageCrousel = () => {
                     setTimeout(checkRegistrationStatus, 100);
                 }}
                 onRegistrationSuccess={() => {
+                    checkRegistrationStatus();
+                }}
+            />
+
+            {/* Auth Modal */}
+            <AuthModal 
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                onLoginSuccess={() => {
+                    setIsAuthModalOpen(false);
                     checkRegistrationStatus();
                 }}
             />

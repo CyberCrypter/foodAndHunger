@@ -66,7 +66,14 @@ const RequestFeed = ({ axios }) => {
             const requestToUpdate = requests.find(r => r.id === requestId);
             if (!requestToUpdate) return;
 
-            const updatedRequest = { ...requestToUpdate, status: "requested", remarks: "Donated by donor" };
+            // Get the donor ID from localStorage
+            const donorId = localStorage.getItem('roleId');
+            const updatedRequest = { 
+                ...requestToUpdate, 
+                status: "readytodonate",
+                donorId: parseInt(donorId), // Set donorId field directly
+                remarks: `Ready to donate by donor ID: ${donorId}` 
+            };
 
             await axios.put(`/request/update/${requestId}`, updatedRequest);
 
@@ -74,7 +81,7 @@ const RequestFeed = ({ axios }) => {
             try {
                 await axios.post('/volunteer/notify', {
                     requestId: requestId,
-                    message: `New request donated: ${requestToUpdate.title}`,
+                    message: `New request ready to donate: ${requestToUpdate.title}`,
                     location: requestToUpdate.address || requestToUpdate.location
                 });
             } catch (notifyError) {
@@ -84,7 +91,7 @@ const RequestFeed = ({ axios }) => {
             // Update local state
             setDonatedRequests((prev) => new Set(prev).add(requestId));
             setRequests((prev) =>
-                prev.map((r) => (r.id === requestId ? { ...r, status: "requested" } : r))
+                prev.map((r) => (r.id === requestId ? { ...r, status: "readytodonate" } : r))
             );
             
             toast.success("Thank you for donating! Volunteers have been notified.");
@@ -101,9 +108,12 @@ const RequestFeed = ({ axios }) => {
                 // Assuming /api/request/all exists based on RequestController
                 const res = await axios.get('/request/all');
                 
-                // Filter admin-approved requests and those with 'requested' status (donated by donors)
+                // Filter admin-approved requests, readytodonate requests, exclude completed and custom statuses
+                const standardStatuses = ['pending', 'approved', 'rejected', 'requested', 'readytodonate', 'completed'];
                 const approvedRequests = res.data.filter(request => 
-                    request.approved === true || request.status === 'approved' || request.status === 'requested'
+                    (request.approved === true || request.status === 'approved' || request.status === 'readytodonate') &&
+                    request.status !== 'completed' &&
+                    (!request.status || standardStatuses.includes(request.status.toLowerCase()))
                 );
                 
                 setRequests(approvedRequests);
@@ -120,7 +130,11 @@ const RequestFeed = ({ axios }) => {
         ? requests
         : requests.filter(req => req.type?.toLowerCase() === filter.toLowerCase()))
         .sort((a, b) => {
-            if (!sortByDistance || !userLocation) return 0;
+            if (!sortByDistance || !userLocation) {
+                const dateA = new Date(a.updatedAt || a.createdAt);
+                const dateB = new Date(b.updatedAt || b.createdAt);
+                return dateB - dateA;
+            }
             const distA = calculateDistance(userLocation.latitude, userLocation.longitude, a.latitude, a.longitude);
             const distB = calculateDistance(userLocation.latitude, userLocation.longitude, b.latitude, b.longitude);
             return distA - distB;
@@ -219,14 +233,14 @@ const RequestFeed = ({ axios }) => {
                                 <div className="pt-4 flex gap-3 border-t border-gray-100">
                                     <button 
                                         onClick={() => setViewDetailsModal(req)}
-                                        disabled={req.status === 'requested'}
+                                        disabled={donatedRequests.has(req.id) || req.status === 'readytodonate'}
                                         className={`flex-1 py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                                            req.status === 'requested'
+                                            donatedRequests.has(req.id) || req.status === 'readytodonate'
                                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                 : 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20'
                                         }`}
                                     >
-                                        {req.status === 'requested' ? (
+                                        {donatedRequests.has(req.id) || req.status === 'readytodonate' ? (
                                             <>
                                                 <CheckCircle className="w-4 h-4" /> Donated
                                             </>
